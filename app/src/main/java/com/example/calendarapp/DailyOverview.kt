@@ -29,7 +29,8 @@ fun DailyPage(modifier: Modifier){
 @Composable
 fun DaySelect(modifier: Modifier = Modifier){
     Row(modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically){
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween){
         Text("<--")
         Text(
             text = "9 November 2023",
