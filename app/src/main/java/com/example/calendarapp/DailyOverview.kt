@@ -23,19 +23,25 @@ fun DailyPage(modifier: Modifier){
     Column{
         DaySelect(modifier = modifier)
         Text(text = "+", modifier = modifier.align(Alignment.End))
+        DailyEventsTimeline()
     }
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier){
+private fun DailyEventsTimeline(events: List<Event>){
+
+}
+
+@Composable
+private fun DaySelect(modifier: Modifier = Modifier){
     Row(modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
         Text("<--")
         Text(
-            text = "9 November 2023",
+            text = "Thursday November 9th, 2023",
             modifier = Modifier.align(Alignment.CenterVertically),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
         Text("-->")
