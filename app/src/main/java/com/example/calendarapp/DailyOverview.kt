@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -85,13 +86,21 @@ private fun DaySelect(modifier: Modifier = Modifier, dayName: String){
     Row(modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
-        Text("<--")
+        Image(
+            painter = painterResource(R.drawable.left_arrow),
+            contentDescription = stringResource(R.string.left_arrow),
+            modifier = modifier.size(30.dp)
+        )
         Text(
             text = dayName,
             modifier = Modifier.align(Alignment.CenterVertically),
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-        Text("-->")
+        Image(
+            painter = painterResource(R.drawable.right_arrow),
+            contentDescription = stringResource(R.string.right_arrow),
+            modifier = modifier.size(30.dp)
+        )
     }
 }
