@@ -2,6 +2,7 @@ package com.example.calendarapp
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import java.time.LocalDateTime
 
 @Preview(showBackground = true)
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
 fun ViewPage(){
@@ -34,7 +38,11 @@ fun DailyPage(modifier: Modifier, dayName : String){
     Column{
         DaySelect(modifier = modifier,dayName = dayName)
         Spacer(modifier = Modifier.height(10.dp))
-        Text(text = "+", modifier = modifier.align(Alignment.End))
+        Image(
+            painter = painterResource(R.drawable.add_button),
+            contentDescription = stringResource(R.string.add_button),
+            modifier = modifier.align(Alignment.End)
+        )
         val event1 = Event("Cooking",
             LocalDateTime.parse("2023-11-11T00:00:00"),
             LocalDateTime.parse("2023-11-11T03:30:00"),
