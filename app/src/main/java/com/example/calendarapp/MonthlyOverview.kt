@@ -74,12 +74,6 @@ fun MonthView(modifier: Modifier =  Modifier){
         .padding(16.dp)
         .background(Color.White)
     ) {
-        val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
-        val trialTime = Date()
-        calendar.time = trialTime;
-        Text(
-            text = calendar.get(Calendar.DAY_OF_MONTH).toString()
-        )
         Header()
         WeekContent()
     }
