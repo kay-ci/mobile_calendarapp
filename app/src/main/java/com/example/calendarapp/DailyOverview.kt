@@ -86,25 +86,26 @@ private fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modif
 
 @Composable
 private fun DaySelect(modifier: Modifier = Modifier, dayName: String){
-    Row(modifier = modifier.fillMaxWidth(),
+    Row(modifier = modifier.fillMaxWidth()
+        .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
         Image(
             painter = painterResource(R.drawable.left_arrow),
             contentDescription = stringResource(R.string.left_arrow),
-            modifier = modifier.size(30.dp)
+            modifier = modifier.size(40.dp)
         )
         Text(
             text = dayName,
             modifier = Modifier.align(Alignment.CenterVertically),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
         Image(
             painter = painterResource(R.drawable.right_arrow),
             contentDescription = stringResource(R.string.right_arrow),
-            modifier = modifier.size(30.dp)
+            modifier = modifier.size(40.dp)
         )
     }
 }
