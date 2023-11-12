@@ -3,6 +3,7 @@ package com.example.calendarapp
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +38,7 @@ fun ViewPage(){
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(modifier: Modifier, dayName : String){
-    Column{
+    Column(modifier = Modifier.background(Color.White)){
         DaySelect(modifier = modifier,dayName = dayName)
         Spacer(modifier = Modifier.height(10.dp))
         Image(
@@ -69,7 +71,8 @@ private fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modif
                     Text(text = "${hour.toString()}:00",
                         modifier = modifier
                             .padding(12.dp),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        color = Color.Black
                     )
                 }
             }
@@ -95,7 +98,8 @@ private fun DaySelect(modifier: Modifier = Modifier, dayName: String){
             text = dayName,
             modifier = Modifier.align(Alignment.CenterVertically),
             fontSize = 20.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
         Image(
             painter = painterResource(R.drawable.right_arrow),
