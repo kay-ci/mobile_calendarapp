@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,12 +43,17 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 @Composable
 
 fun ViewPage(){
+    val event2 = Event("Skiing",
+        LocalDateTime.parse("2023-11-11T04:00:00"),
+        LocalDateTime.parse("2023-11-11T06:30:00"),
+        "Going to ski","Mont Bruno")
     DailyPage(modifier = Modifier, dayName = "Thursday November 9th, 2023")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(modifier: Modifier, dayName : String){
+    val events = remember { mutableStateListOf<Event>() }
     Column(modifier = Modifier.background(Color.White)){
         DaySelect(modifier = modifier,dayName = dayName)
         Spacer(modifier = Modifier.height(10.dp))
@@ -53,20 +61,10 @@ fun DailyPage(modifier: Modifier, dayName : String){
             painter = painterResource(R.drawable.add_button),
             contentDescription = stringResource(R.string.add_button),
             modifier = modifier.align(Alignment.End)
-        )
-        val event1 = Event("Cooking",
-            LocalDateTime.parse("2023-11-11T01:00:00"),
-            LocalDateTime.parse("2023-11-11T03:30:00"),
-            "Going to cook","Mont Bruno")
-        val event2 = Event("Skiing",
-            LocalDateTime.parse("2023-11-11T04:00:00"),
-            LocalDateTime.parse("2023-11-11T06:30:00"),
-            "Going to ski","Mont Bruno")
-        DailyEventsTimeline(listOf<Event>(event1,event2,Event("Skiing",
-            LocalDateTime.parse("2023-11-11T07:00:00"),
-            LocalDateTime.parse("2023-11-11T12:30:00"),
-            "Going to ski","Mont Bruno")))
-    }
+                .clickable{/*Navigate to add event*/}
+            )
+        DailyEventsTimeline(events = events)
+        }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -156,6 +154,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String){
             painter = painterResource(R.drawable.left_arrow),
             contentDescription = stringResource(R.string.left_arrow),
             modifier = modifier.size(40.dp)
+                .clickable{/*Go to previous day*/}
         )
         Text(
             text = dayName,
@@ -168,6 +167,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String){
             painter = painterResource(R.drawable.right_arrow),
             contentDescription = stringResource(R.string.right_arrow),
             modifier = modifier.size(40.dp)
+                .clickable{/*Go to next day*/}
         )
     }
 }
