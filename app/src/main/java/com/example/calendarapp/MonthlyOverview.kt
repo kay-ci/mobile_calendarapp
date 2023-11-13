@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +47,7 @@ fun MonthView(){
     ) {
         val calendarViewModel : CalendarViewModel = viewModel()
 
-        val list = listOf<String>("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = calendarViewModel)
         WeekDaysHeader(list = list)
         MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
@@ -135,6 +136,7 @@ fun MonthContent(data: CalendarViewModel, list : List<String>){
 }
 
 // The content inside each cell
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentItem(content: String){
     if(content.isNotBlank()) {
@@ -144,6 +146,7 @@ fun ContentItem(content: String){
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
+            onClick = { /*TODO*/ }
         ) {
             Column(
                 modifier = Modifier
