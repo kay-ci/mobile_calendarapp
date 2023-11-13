@@ -1,15 +1,19 @@
 package com.example.calendarapp
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
@@ -50,8 +54,27 @@ fun MonthView(){
         Header(data = calendarViewModel)
         WeekDaysHeader(list = list)
         MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomEnd
+        ){
+            IconButton(onClick = { /*TODO add event*/ },
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.AddCircle,
+                    contentDescription = "AddEvent",
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
+
     }
 }
+
 
 // Display month, year and buttons
 @Composable
