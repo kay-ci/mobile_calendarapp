@@ -38,6 +38,23 @@ fun ShowMonthView(){
 }
 
 @Composable
+fun MonthView(){
+    Column (modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+        .background(Color.White)
+    ) {
+        val calendarViewModel : CalendarViewModel = viewModel()
+
+        val list = listOf<String>("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        Header(data = calendarViewModel)
+        WeekDaysHeader(list = list)
+        MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
+    }
+}
+
+// Display month, year and buttons
+@Composable
 fun Header(data: CalendarViewModel){
     Row(modifier = Modifier
         .padding(horizontal = 16.dp)
@@ -66,48 +83,10 @@ fun Header(data: CalendarViewModel){
         }
     }
 }
-@Composable
-fun MonthView(){
-    Column (modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)
-        .background(Color.White)
-    ) {
-        val calendarViewModel : CalendarViewModel = viewModel()
 
-        val list = listOf<String>("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
-        Header(data = calendarViewModel)
-        WeekContent(data = calendarViewModel, list = list)
-        WeekContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
-    }
-}
-
-// The content inside each cell
+// Display the 7 weeks days
 @Composable
-fun ContentItem(weekDay: String){
-    Card(
-        modifier = Modifier
-            .padding(vertical = 2.dp, horizontal = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
-    ) {
-        Column(modifier = Modifier
-            .width(40.dp)
-            .height(35.dp)
-            .padding(2.dp)
-        ) {
-            Text(
-                text = weekDay,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
-    }
-}
-
-@Composable
-fun WeekContent(data: CalendarViewModel, list : List<String>){
+fun WeekDaysHeader(list : List<String>){
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         // content padding
@@ -117,9 +96,67 @@ fun WeekContent(data: CalendarViewModel, list : List<String>){
             end = 10.dp,
         ),
         content = {
+
             items(items = list) {cellContent ->
-                ContentItem(weekDay = cellContent)
+                ContentItem(content = cellContent)
             }
         }
     )
+}
+
+// Display the month days
+@Composable
+fun MonthContent(data: CalendarViewModel, list : List<String>){
+    val firstDayOfWeek = data.firstWeekDay.value
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(7),
+        // content padding
+        contentPadding = PaddingValues1(
+            start = 10.dp,
+            top = 10.dp,
+            end = 10.dp,
+        ),
+        content = {
+            val offsetList = mutableListOf<String>()
+
+            // Adding empty cells for offset
+            // handle off by one
+            repeat(if (firstDayOfWeek == 1) 0 else firstDayOfWeek + 1) {
+                offsetList.add("") // or any placeholder value for empty cells
+            }
+
+            // Add the rest of the month days
+            offsetList.addAll(list)
+            items(items = offsetList) {cellContent ->
+                ContentItem(content = cellContent)
+            }
+        }
+    )
+}
+
+// The content inside each cell
+@Composable
+fun ContentItem(content: String){
+    if(content.isNotBlank()) {
+        Card(
+            modifier = Modifier
+                .padding(vertical = 2.dp, horizontal = 4.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.primary
+            ),
+        ) {
+            Column(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(35.dp)
+                    .padding(2.dp)
+            ) {
+                Text(
+                    text = content,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+        }
+    }
 }

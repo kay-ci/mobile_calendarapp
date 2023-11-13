@@ -51,12 +51,14 @@ class CalendarViewModel () : ViewModel() {
         calendar.add(Calendar.MONTH, 1)
         updateMonthYear()
         updateDaysOfMonth()
+        updateFirstWeekDay()
     }
 
     fun previousMonth(){
         calendar.add(Calendar.MONTH, -1)
         updateMonthYear()
         updateDaysOfMonth()
+        updateFirstWeekDay()
     }
     private fun updateDaysOfMonth(){
         val days = mutableListOf<String>()
