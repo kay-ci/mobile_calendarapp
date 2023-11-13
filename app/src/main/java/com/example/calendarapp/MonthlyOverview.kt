@@ -1,7 +1,5 @@
 package com.example.calendarapp
 
-import android.icu.util.Calendar
-import android.icu.util.ULocale
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,22 +27,22 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.util.Date
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
 @Preview
-fun showMonthView(){
+fun ShowMonthView(){
     MonthView()
 }
 
 @Composable
-fun Header(){
+fun Header(data: CalendarViewModel){
     Row(modifier = Modifier
         .padding(horizontal = 16.dp)
     ){
-        IconButton(onClick = { /*TODO*/ }) {
+
+        IconButton(onClick = { data.previousMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 contentDescription = "Previous Month"
@@ -52,14 +50,14 @@ fun Header(){
         }
 
         Text(
-            text = "November 2023",
+            text = "${data.currentMonth.value} ${data.currentYear.value}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
         )
 
-        IconButton(onClick = { /*TODO*/ }) {
+        IconButton(onClick = { data.nextMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = "Next Month"
@@ -68,14 +66,15 @@ fun Header(){
     }
 }
 @Composable
-fun MonthView(modifier: Modifier =  Modifier){
+fun MonthView(){
     Column (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
         .background(Color.White)
     ) {
-        Header()
-        WeekContent()
+        val calendarViewModel = CalendarViewModel()
+        Header(data = calendarViewModel)
+        WeekContent(data = calendarViewModel)
     }
 }
 
@@ -91,7 +90,7 @@ fun ContentItem(weekDay: String){
     ) {
         Column(modifier = Modifier
             .width(40.dp)
-            .height(48.dp)
+            .height(35.dp)
             .padding(2.dp)
         ) {
             Text(
@@ -104,7 +103,7 @@ fun ContentItem(weekDay: String){
 }
 
 @Composable
-fun WeekContent(){
+fun WeekContent(data: CalendarViewModel){
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         // content padding
@@ -112,7 +111,6 @@ fun WeekContent(){
             start = 10.dp,
             top = 10.dp,
             end = 10.dp,
-            bottom = 10.dp
         ),
         content = {
             val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
