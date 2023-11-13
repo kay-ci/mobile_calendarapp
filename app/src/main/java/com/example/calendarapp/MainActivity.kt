@@ -26,11 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val event = Event("Cooking",
-                        LocalDateTime.parse("2007-12-03T10:15:30"),
-                        LocalDateTime.parse("2007-12-03T10:16:30"),
-                        "Going to cook")
-                    EventScreen(event)
+                    Greeting("Android")
                 }
             }
         }
