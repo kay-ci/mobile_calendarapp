@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
@@ -72,9 +73,12 @@ fun MonthView(){
         .padding(16.dp)
         .background(Color.White)
     ) {
-        val calendarViewModel = CalendarViewModel()
+        val calendarViewModel : CalendarViewModel = viewModel()
+
+        val list = listOf<String>("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = calendarViewModel)
-        WeekContent(data = calendarViewModel)
+        WeekContent(data = calendarViewModel, list = list)
+        WeekContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
     }
 }
 
@@ -103,7 +107,7 @@ fun ContentItem(weekDay: String){
 }
 
 @Composable
-fun WeekContent(data: CalendarViewModel){
+fun WeekContent(data: CalendarViewModel, list : List<String>){
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         // content padding
@@ -113,9 +117,8 @@ fun WeekContent(data: CalendarViewModel){
             end = 10.dp,
         ),
         content = {
-            val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
-            items(items = list) {date ->
-                ContentItem(weekDay = date)
+            items(items = list) {cellContent ->
+                ContentItem(weekDay = cellContent)
             }
         }
     )

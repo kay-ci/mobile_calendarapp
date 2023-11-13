@@ -8,22 +8,26 @@ import androidx.lifecycle.ViewModel
 
 
 class CalendarViewModel () : ViewModel() {
+    private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
+
     private val _currentMonth = mutableStateOf("")
     val currentMonth: MutableState<String> = _currentMonth
 
     private val _currentYear = mutableStateOf(0)
     val currentYear: MutableState<Int> = _currentYear
 
-    private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
+    private val _daysInMonth = mutableStateOf<List<String>>(emptyList())
+    val daysInMonth : MutableState<List<String>> = _daysInMonth
 
+    private val _firstWeekDay = mutableStateOf<Int>(Calendar.SUNDAY)
+    val firstWeekDay : MutableState<Int> = _firstWeekDay
 
     init {
         updateMonthYear()
+        updateDaysOfMonth()
+        updateFirstWeekDay()
     }
 
-    fun getYear(): Int {
-        return calendar.get(Calendar.YEAR)
-    }
     private fun updateMonthYear() {
         val month = when (calendar.get(Calendar.MONTH)){
             0 -> "January"
@@ -46,12 +50,27 @@ class CalendarViewModel () : ViewModel() {
     fun nextMonth(){
         calendar.add(Calendar.MONTH, 1)
         updateMonthYear()
+        updateDaysOfMonth()
     }
 
     fun previousMonth(){
         calendar.add(Calendar.MONTH, -1)
         updateMonthYear()
+        updateDaysOfMonth()
+    }
+    private fun updateDaysOfMonth(){
+        val days = mutableListOf<String>()
+        val totalDays = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+        for (day in 1..totalDays) {
+            days.add(day.toString())
+        }
+
+        _daysInMonth.value = days
     }
 
+    private fun updateFirstWeekDay(){
+        firstWeekDay.value = calendar.get(Calendar.DAY_OF_WEEK)
+    }
 
 }
