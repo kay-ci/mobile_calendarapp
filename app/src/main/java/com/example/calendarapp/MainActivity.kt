@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DailyPage(modifier = Modifier, dayName = "Thursday November 9th, 2023")
+                    Greeting("Android")
                 }
             }
         }
