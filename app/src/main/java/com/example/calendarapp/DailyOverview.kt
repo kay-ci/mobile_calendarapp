@@ -17,10 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +31,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import java.time.Duration
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+
+
 @RequiresApi(Build.VERSION_CODES.O)
 val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
+
+
 @Preview(showBackground = true)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -47,24 +52,31 @@ fun ViewPage(){
         LocalDateTime.parse("2023-11-11T04:00:00"),
         LocalDateTime.parse("2023-11-11T06:30:00"),
         "Going to ski","Mont Bruno")
-    DailyPage(modifier = Modifier, dayName = "Thursday November 9th, 2023")
+    val currentDate = remember { mutableStateOf(LocalDate.now()) }
+    DailyPage(
+        modifier = Modifier,
+        dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
+        currentDate = currentDate,
+        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
+        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) }
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyPage(modifier: Modifier, dayName : String){
+fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
     val events = remember { mutableStateListOf<Event>() }
     Column(modifier = Modifier.background(Color.White)){
-        DaySelect(modifier = modifier,dayName = dayName)
+        DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
         Image(
             painter = painterResource(R.drawable.add_button),
             contentDescription = stringResource(R.string.add_button),
             modifier = modifier.align(Alignment.End)
                 .clickable{/*Navigate to add event*/}
-            )
+        )
         DailyEventsTimeline(events = events)
-        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -144,7 +156,7 @@ fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier) 
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier, dayName: String){
+fun DaySelect(modifier: Modifier = Modifier, dayName: String,onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
     Row(modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 12.dp),
@@ -154,7 +166,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String){
             painter = painterResource(R.drawable.left_arrow),
             contentDescription = stringResource(R.string.left_arrow),
             modifier = modifier.size(40.dp)
-                .clickable{/*Go to previous day*/}
+                .clickable{onPreviousDayClick()}
         )
         Text(
             text = dayName,
@@ -167,7 +179,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String){
             painter = painterResource(R.drawable.right_arrow),
             contentDescription = stringResource(R.string.right_arrow),
             modifier = modifier.size(40.dp)
-                .clickable{/*Go to next day*/}
+                .clickable{onNextDayClick()}
         )
     }
 }
