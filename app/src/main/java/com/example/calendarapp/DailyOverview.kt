@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,9 +25,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.Duration
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
+val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 @Preview(showBackground = true)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -54,12 +60,16 @@ fun DailyPage(modifier: Modifier, dayName : String){
             LocalDateTime.parse("2023-11-11T04:00:00"),
             LocalDateTime.parse("2023-11-11T06:30:00"),
             "Going to ski")
-        DailyEventsTimeline(listOf<Event>(event1,event2))
+        DailyEventsTimeline(listOf<Event>(event1,event2,Event("Skiing",
+            LocalDateTime.parse("2023-11-11T06:30:00"),
+            LocalDateTime.parse("2023-11-11T09:30:00"),
+            "Going to ski")))
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
+fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
     Column(modifier = modifier
         .verticalScroll(rememberScrollState())
         .fillMaxWidth()) {
@@ -70,23 +80,61 @@ private fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modif
                 for(hour in (0..23)){
                     Text(text = "${hour.toString()}:00",
                         modifier = modifier
-                            .padding(12.dp),
-                        fontSize = 20.sp,
+                            .padding(bottom = 10.dp, end = 10.dp)
+                            .height(30.dp),
+                        fontSize = 15.sp,
                         color = Color.Black
                     )
                 }
+
             }
             //Column for the displaying the events
             Column {
-
+                // Sort events by start time to ensure accurate placement
+                val sortedEvents = events.sortedBy { it.startTime }
+                var previousEndEvent = 0
+                for (event in sortedEvents) {
+                    val startEvent = event.startTime.hour * 60 + event.startTime.minute
+                    val eventDuration = Duration.between(event.startTime, event.endTime).toMinutes()
+                    val totalStartTime = (startEvent - previousEndEvent) * 41 // Adjust the multiplier for suitable spacing
+                    // Spacer for empty time slots before the event
+                    Spacer(
+                        modifier = Modifier.height((totalStartTime / 60).dp).fillMaxWidth()
+                    )
+                    val eventLength = (eventDuration.toDouble() / 60) * 42 // Adjust the multiplier for suitable event length
+                    EventSpace(event = event, eventLength = eventLength)
+                    previousEndEvent = startEvent + eventDuration.toInt()
+                }
             }
         }
     }
 }
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .height(eventLength.dp)
+            .fillMaxWidth()
+            .background(Color.LightGray)
+    ) {
+        Text(
+            text = event.title,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+
+        Text(
+            text = "${event.startTime.format(EventFormatter)} - ${event.endTime.format(EventFormatter)}",
+            color = Color.Black
+        )
+    }
+}
 
 @Composable
-private fun DaySelect(modifier: Modifier = Modifier, dayName: String){
-    Row(modifier = modifier.fillMaxWidth()
+fun DaySelect(modifier: Modifier = Modifier, dayName: String){
+    Row(modifier = modifier
+        .fillMaxWidth()
         .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
