@@ -1,8 +1,10 @@
 package com.example.calendarapp
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.calendarapp.ui.theme.CalendarAppTheme
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,7 +26,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    DailyPage(modifier = Modifier, dayName = "Thursday November 9th, 2023")
+                    val event = Event("Cooking",
+                        LocalDateTime.parse("2007-12-03T10:15:30"),
+                        LocalDateTime.parse("2007-12-03T10:16:30"),
+                        "Going to cook")
+                    EventScreen(event)
                 }
             }
         }
