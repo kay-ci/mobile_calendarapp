@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -53,7 +55,7 @@ fun DailyPage(modifier: Modifier, dayName : String){
             modifier = modifier.align(Alignment.End)
         )
         val event1 = Event("Cooking",
-            LocalDateTime.parse("2023-11-11T00:00:00"),
+            LocalDateTime.parse("2023-11-11T01:00:00"),
             LocalDateTime.parse("2023-11-11T03:30:00"),
             "Going to cook")
         val event2 = Event("Skiing",
@@ -61,8 +63,8 @@ fun DailyPage(modifier: Modifier, dayName : String){
             LocalDateTime.parse("2023-11-11T06:30:00"),
             "Going to ski")
         DailyEventsTimeline(listOf<Event>(event1,event2,Event("Skiing",
-            LocalDateTime.parse("2023-11-11T06:30:00"),
-            LocalDateTime.parse("2023-11-11T09:30:00"),
+            LocalDateTime.parse("2023-11-11T07:00:00"),
+            LocalDateTime.parse("2023-11-11T12:30:00"),
             "Going to ski")))
     }
 }
@@ -78,7 +80,7 @@ fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
             Column {
                 //Loop over all the hours in a day to display them
                 for(hour in (0..23)){
-                    Text(text = "${hour.toString()}:00",
+                    Text(text = "${hour}:00",
                         modifier = modifier
                             .padding(bottom = 10.dp, end = 10.dp)
                             .height(30.dp),
@@ -86,48 +88,60 @@ fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
                         color = Color.Black
                     )
                 }
-
             }
-            //Column for the displaying the events
-            Column {
-                // Sort events by start time to ensure accurate placement
-                val sortedEvents = events.sortedBy { it.startTime }
-                var previousEndEvent = 0
-                for (event in sortedEvents) {
-                    val startEvent = event.startTime.hour * 60 + event.startTime.minute
-                    val eventDuration = Duration.between(event.startTime, event.endTime).toMinutes()
-                    val totalStartTime = (startEvent - previousEndEvent) * 41 // Adjust the multiplier for suitable spacing
-                    // Spacer for empty time slots before the event
-                    Spacer(
-                        modifier = Modifier.height((totalStartTime / 60).dp).fillMaxWidth()
-                    )
-                    val eventLength = (eventDuration.toDouble() / 60) * 42 // Adjust the multiplier for suitable event length
-                    EventSpace(event = event, eventLength = eventLength)
-                    previousEndEvent = startEvent + eventDuration.toInt()
-                }
-            }
+            ListEvents(events)
         }
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+private fun ListEvents(events: List<Event>) {
+    //Column for the displaying the events
+    Column {
+        // Sort events by start time to ensure accurate placement
+        val sortedEvents = events.sortedBy { it.startTime }
+        var previousEndEvent = 0
+        for (event in sortedEvents) {
+            val startEvent = event.startTime.hour * 60 + event.startTime.minute
+            val eventDuration = Duration.between(event.startTime, event.endTime).toMinutes()
+            val totalStartTime = (startEvent - previousEndEvent) * 41
+            // Spacer for empty time slots before the event
+            Spacer(
+                modifier = Modifier
+                    .height((totalStartTime / 60).dp)
+                    .fillMaxWidth()
+            )
+            val eventLength = (eventDuration.toDouble() / 60) * 42
+            EventSpace(event = event, eventLength = eventLength)
+            previousEndEvent = startEvent + eventDuration.toInt()
+        }
+    }
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier) {
-    Column(
+    Box(
         modifier = modifier
             .height(eventLength.dp)
             .fillMaxWidth()
-            .background(Color.LightGray)
+            .background(Color.LightGray, shape = RoundedCornerShape(7.dp))
+            .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
-        Text(
-            text = event.title,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-
-        Text(
-            text = "${event.startTime.format(EventFormatter)} - ${event.endTime.format(EventFormatter)}",
-            color = Color.Black
-        )
+        Column(
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Text(
+                text = event.title,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black
+            )
+            Text(
+                text = "${event.startTime.format(EventFormatter)} - ${event.endTime.format(EventFormatter)}",
+                color = Color.Black
+            )
+        }
     }
 }
 
