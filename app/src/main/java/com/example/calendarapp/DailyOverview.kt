@@ -57,15 +57,15 @@ fun DailyPage(modifier: Modifier, dayName : String){
         val event1 = Event("Cooking",
             LocalDateTime.parse("2023-11-11T01:00:00"),
             LocalDateTime.parse("2023-11-11T03:30:00"),
-            "Going to cook")
+            "Going to cook","Mont Bruno")
         val event2 = Event("Skiing",
             LocalDateTime.parse("2023-11-11T04:00:00"),
             LocalDateTime.parse("2023-11-11T06:30:00"),
-            "Going to ski")
+            "Going to ski","Mont Bruno")
         DailyEventsTimeline(listOf<Event>(event1,event2,Event("Skiing",
             LocalDateTime.parse("2023-11-11T07:00:00"),
             LocalDateTime.parse("2023-11-11T12:30:00"),
-            "Going to ski")))
+            "Going to ski","Mont Bruno")))
     }
 }
 
