@@ -53,19 +53,22 @@ fun ViewPage(){
         LocalDateTime.parse("2023-11-11T06:30:00"),
         "Going to ski","Mont Bruno")
     val currentDate = remember { mutableStateOf(LocalDate.now()) }
+    val eventList = remember { mutableStateListOf<Event>() }
+    eventList.clear()
     DailyPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
         currentDate = currentDate,
         onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
-        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) }
+        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
+        events = eventList
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
-    val events = remember { mutableStateListOf<Event>() }
+fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit,
+              events: MutableList<Event>){
     Column(modifier = Modifier.background(Color.White)){
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
@@ -73,7 +76,7 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
             painter = painterResource(R.drawable.add_button),
             contentDescription = stringResource(R.string.add_button),
             modifier = modifier.align(Alignment.End)
-                .clickable{/*Navigate to add event*/}
+                .clickable{/* Add navigation to add event */}
         )
         DailyEventsTimeline(events = events)
     }
