@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Routes.EditEventView.route){
-                EventView()
+                EventView(navController)
             }
 
             composable(Routes.CreateEventView.route){
