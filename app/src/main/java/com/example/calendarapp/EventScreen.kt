@@ -39,13 +39,8 @@ fun EventScreen(event: Event, navController: NavHostController){
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     LazyColumn{
         item{
+            NavigationBar(navController = navController)
             Row(){
-                Button(onClick = {navController.navigate(Routes.DailyView.route)}){
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
-                        contentDescription = "back arrow"
-                    )
-                }
                 Button(onClick = {editable = !editable},
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
                     Text("Edit")

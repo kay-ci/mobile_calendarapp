@@ -65,10 +65,7 @@ fun MonthView(navController: NavHostController) {
             contentAlignment = Alignment.BottomEnd
         ){
             IconButton(onClick = {
-                val event2 = Event("Skiing",
-                    LocalDateTime.parse("2023-11-11T04:00:00"),
-                    LocalDateTime.parse("2023-11-11T06:30:00"),
-                    "Going to ski","Mont Bruno")
+
                 navController.navigate(Routes.EditEventView.route) },
                 modifier = Modifier
                     .fillMaxWidth()

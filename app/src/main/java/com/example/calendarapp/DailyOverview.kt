@@ -2,9 +2,7 @@ package com.example.calendarapp
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +19,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -32,12 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -50,11 +49,13 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
 @Composable
 
-fun ViewPage(){
-
+fun ViewPage(navController: NavHostController) {
+    val event2 = Event("Skiing",
+        LocalDateTime.parse("2023-11-11T04:00:00"),
+        LocalDateTime.parse("2023-11-11T06:30:00"),
+        "Going to ski","Mont Bruno")
     val currentDate = remember { mutableStateOf(LocalDate.now()) }
     val eventList = remember { mutableStateListOf<Event>() }
     eventList.clear()
@@ -65,15 +66,18 @@ fun ViewPage(){
         currentDate = currentDate,
         onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
         onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
-        events = eventList
+        events = eventList,
+        navController = navController
     )
 }
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit,
-              events: MutableList<Event>){
+              events: MutableList<Event>, navController: NavHostController){
     Column(modifier = Modifier.background(Color.White)){
+        NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = { /* Add navigation to add event */},
@@ -89,7 +93,23 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
         DailyEventsTimeline(events = events)
     }
 }
-
+@Composable
+fun NavigationBar(navController: NavHostController) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .size(30.dp)
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(5.dp),
+    ){
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "Go to previous page",
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+        }
+    }
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
