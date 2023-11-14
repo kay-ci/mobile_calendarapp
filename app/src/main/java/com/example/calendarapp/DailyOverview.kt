@@ -17,6 +17,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -50,28 +56,36 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 fun ViewPage(){
 
     val currentDate = remember { mutableStateOf(LocalDate.now()) }
+    val eventList = remember { mutableStateListOf<Event>() }
+    eventList.clear()
+    eventList.add(event2)
     DailyPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
         currentDate = currentDate,
         onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
-        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) }
+        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
+        events = eventList
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
-    val events = remember { mutableStateListOf<Event>() }
+fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit,
+              events: MutableList<Event>){
     Column(modifier = Modifier.background(Color.White)){
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        Image(
-            painter = painterResource(R.drawable.add_button),
-            contentDescription = stringResource(R.string.add_button),
-            modifier = modifier.align(Alignment.End)
-                .clickable{/*Navigate to add event*/}
-        )
+        IconButton(onClick = { /* Add navigation to add event */},
+            modifier = Modifier
+                .align(Alignment.End)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.AddCircle,
+                contentDescription = stringResource(R.string.add_button),
+                modifier = Modifier.size(30.dp)
+            )
+        }
         DailyEventsTimeline(events = events)
     }
 }
@@ -159,12 +173,12 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String,onPreviousDayClick:
         .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
-        Image(
-            painter = painterResource(R.drawable.left_arrow),
-            contentDescription = stringResource(R.string.left_arrow),
-            modifier = modifier.size(40.dp)
-                .clickable{onPreviousDayClick()}
-        )
+        IconButton(onClick = { onPreviousDayClick() }) {
+            Icon(
+                imageVector = Icons.Filled.ArrowBack,
+                contentDescription = stringResource(R.string.left_arrow)
+            )
+        }
         Text(
             text = dayName,
             modifier = Modifier.align(Alignment.CenterVertically),
@@ -172,11 +186,11 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String,onPreviousDayClick:
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        Image(
-            painter = painterResource(R.drawable.right_arrow),
-            contentDescription = stringResource(R.string.right_arrow),
-            modifier = modifier.size(40.dp)
-                .clickable{onNextDayClick()}
-        )
+        IconButton(onClick = { onNextDayClick() }) {
+            Icon(
+                imageVector = Icons.Filled.ArrowForward,
+                contentDescription = stringResource(R.string.right_arrow)
+            )
+        }
     }
 }
