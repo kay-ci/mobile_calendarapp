@@ -32,17 +32,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import java.time.LocalDateTime
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
 @Preview
 fun ShowMonthView(){
-    MonthView()
+    val navController = rememberNavController()
+    MonthView(navController)
 }
 
 @Composable
-fun MonthView(){
+fun MonthView(navController: NavHostController) {
     Column (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
@@ -60,7 +64,12 @@ fun MonthView(){
                 .padding(16.dp),
             contentAlignment = Alignment.BottomEnd
         ){
-            IconButton(onClick = { /*TODO add event*/ },
+            IconButton(onClick = {
+                val event2 = Event("Skiing",
+                    LocalDateTime.parse("2023-11-11T04:00:00"),
+                    LocalDateTime.parse("2023-11-11T06:30:00"),
+                    "Going to ski","Mont Bruno")
+                navController.navigate(Routes.EditEventView.route) },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {

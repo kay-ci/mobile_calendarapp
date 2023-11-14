@@ -8,15 +8,15 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
-import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.O)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -26,9 +26,35 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MonthView()
+                    HomeView()
                 }
             }
         }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @Composable
+    fun HomeView(){
+        val navController = rememberNavController()
+        NavHost(navController = navController, startDestination = Routes.MonthView.route) {
+
+            // Navigation graph destinations
+            composable(Routes.MonthView.route){
+                MonthView(navController)
+            }
+
+            composable(Routes.DailyView.route){
+                ViewPage()
+            }
+
+            composable(Routes.EditEventView.route){
+                EventView()
+            }
+
+            composable(Routes.CreateEventView.route){
+                CreateEvent()
+            }
+        }
+
     }
 }

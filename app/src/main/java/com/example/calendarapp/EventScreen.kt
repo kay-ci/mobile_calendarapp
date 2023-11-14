@@ -31,7 +31,19 @@ import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import java.time.LocalDateTime
 import java.time.format.TextStyle
+
+
+//
+@Composable
+fun EventView(){
+    val testEvent = Event("Skiing",
+        LocalDateTime.parse("2023-11-11T04:00:00"),
+        LocalDateTime.parse("2023-11-11T06:30:00"),
+        "Going to ski","Mont Bruno")
+    EventScreen(event = testEvent)
+}
 
 @Composable
 fun EventScreen(event: Event){
@@ -82,3 +94,7 @@ fun Field(editable: Boolean, label: String, startingValue: String){
         )
     }
 }
+
+// Create event view maybe put in another file
+@Composable
+fun CreateEvent(){}

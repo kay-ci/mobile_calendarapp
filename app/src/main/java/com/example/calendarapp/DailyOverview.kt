@@ -45,14 +45,10 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
 fun ViewPage(){
-    val event2 = Event("Skiing",
-        LocalDateTime.parse("2023-11-11T04:00:00"),
-        LocalDateTime.parse("2023-11-11T06:30:00"),
-        "Going to ski","Mont Bruno")
+
     val currentDate = remember { mutableStateOf(LocalDate.now()) }
     DailyPage(
         modifier = Modifier,
