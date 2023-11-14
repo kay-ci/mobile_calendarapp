@@ -16,7 +16,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 
 class MainActivity : ComponentActivity() {
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,7 +31,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable
     fun HomeView(){
         val navController = rememberNavController()
