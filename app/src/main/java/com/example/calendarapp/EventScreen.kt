@@ -45,7 +45,10 @@ fun EventScreen(event: Event, navController: NavHostController){
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
                     Text("Edit")
                 }
-                Button(onClick = {}){
+                Button(onClick = {
+                    /* TODO validation on the fields and then go to previous page*/
+                    navController.popBackStack()
+                }){
                     Text("Save")
                 }
             }
@@ -81,4 +84,6 @@ fun Field(editable: Boolean, label: String, startingValue: String){
 
 // Create event view maybe put in another file
 @Composable
-fun CreateEvent(){}
+fun CreateEvent(navController: NavHostController){
+    NavigationBar(navController = navController)
+}

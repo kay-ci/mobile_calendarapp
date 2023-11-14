@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -90,7 +92,7 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
                 modifier = Modifier.size(30.dp)
             )
         }
-        DailyEventsTimeline(events = events)
+        DailyEventsTimeline(events = events, modifier, navController)
     }
 }
 @Composable
@@ -112,7 +114,7 @@ fun NavigationBar(navController: NavHostController) {
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
+fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier, navController: NavHostController){
     Column(modifier = modifier
         .verticalScroll(rememberScrollState())
         .fillMaxWidth()) {
@@ -130,14 +132,14 @@ fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
                     )
                 }
             }
-            ListEvents(events)
+            ListEvents(events, navController = navController)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun ListEvents(events: List<Event>) {
+private fun ListEvents(events: List<Event>, navController: NavHostController) {
     //Column for the displaying the events
     Column {
         // Sort events by start time to ensure accurate placement
@@ -154,21 +156,23 @@ private fun ListEvents(events: List<Event>) {
                     .fillMaxWidth()
             )
             val eventLength = (eventDuration.toDouble() / 60) * 42
-            EventSpace(event = event, eventLength = eventLength)
+            EventSpace(event = event, eventLength = eventLength, navController = navController)
             previousEndEvent = startEvent + eventDuration.toInt()
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier) {
-    Box(
+fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier, navController: NavHostController) {
+    Card(
         modifier = modifier
             .height(eventLength.dp)
             .fillMaxWidth()
             .background(Color.LightGray, shape = RoundedCornerShape(7.dp))
-            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        onClick = { navController.navigate(Routes.EditEventView.route) }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
