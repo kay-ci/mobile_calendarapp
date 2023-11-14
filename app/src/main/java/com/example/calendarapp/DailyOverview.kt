@@ -95,6 +95,7 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
         DailyEventsTimeline(events = events, modifier, navController)
     }
 }
+// Should be added at the top of every view to go to previous page.
 @Composable
 fun NavigationBar(navController: NavHostController) {
     Box(modifier = Modifier
