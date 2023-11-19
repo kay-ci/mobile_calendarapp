@@ -32,17 +32,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import java.time.LocalDateTime
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
 @Preview
 fun ShowMonthView(){
-    MonthView()
+    val navController = rememberNavController()
+    MonthView(navController)
 }
 
 @Composable
-fun MonthView(){
+fun MonthView(navController: NavHostController) {
     Column (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
@@ -52,15 +56,17 @@ fun MonthView(){
 
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = calendarViewModel)
-        WeekDaysHeader(list = list)
-        MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value)
+        WeekDaysHeader(list = list, navController)
+        MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value, navController)
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             contentAlignment = Alignment.BottomEnd
         ){
-            IconButton(onClick = { /*TODO add event*/ },
+            IconButton(onClick = {
+                // This does not work right now (need to make create view)
+                navController.navigate(Routes.CreateEventView.route) },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
@@ -109,7 +115,7 @@ fun Header(data: CalendarViewModel){
 
 // Display the 7 weeks days
 @Composable
-fun WeekDaysHeader(list : List<String>){
+fun WeekDaysHeader(list : List<String>, navController: NavHostController){
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         // content padding
@@ -121,7 +127,7 @@ fun WeekDaysHeader(list : List<String>){
         content = {
 
             items(items = list) {cellContent ->
-                ContentItem(content = cellContent)
+                ContentItem(content = cellContent, navController = navController)
             }
         }
     )
@@ -129,7 +135,7 @@ fun WeekDaysHeader(list : List<String>){
 
 // Display the month days
 @Composable
-fun MonthContent(data: CalendarViewModel, list : List<String>){
+fun MonthContent(data: CalendarViewModel, list: List<String>, navController: NavHostController){
     val firstDayOfWeek = data.firstWeekDay.value
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
@@ -151,7 +157,7 @@ fun MonthContent(data: CalendarViewModel, list : List<String>){
             // Add the rest of the month days
             offsetList.addAll(list)
             items(items = offsetList) {cellContent ->
-                ContentItem(content = cellContent)
+                ContentItem(content = cellContent, navController)
             }
         }
     )
@@ -160,7 +166,7 @@ fun MonthContent(data: CalendarViewModel, list : List<String>){
 // The content inside each cell
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContentItem(content: String){
+fun ContentItem(content: String, navController: NavHostController){
     if(content.isNotBlank()) {
         Card(
             modifier = Modifier
@@ -168,7 +174,7 @@ fun ContentItem(content: String){
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
-            onClick = { /*TODO*/ }
+            onClick = { navController.navigate(Routes.DailyView.route) }
         ) {
             Column(
                 modifier = Modifier
