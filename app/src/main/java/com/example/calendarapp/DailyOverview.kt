@@ -53,12 +53,12 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
-fun ViewPage(navController: NavHostController) {
+fun ViewPage(navController: NavHostController, selectedDate: LocalDate) {
     val event2 = Event("Skiing",
         LocalDateTime.parse("2023-11-11T04:00:00"),
         LocalDateTime.parse("2023-11-11T06:30:00"),
         "Going to ski","Mont Bruno")
-    val currentDate = remember { mutableStateOf(LocalDate.now()) }
+    val currentDate = remember { mutableStateOf(selectedDate) }
     val eventList = remember { mutableStateListOf<Event>() }
     eventList.clear()
     eventList.add(event2)
