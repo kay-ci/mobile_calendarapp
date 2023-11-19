@@ -1,5 +1,7 @@
 package com.example.calendarapp
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +42,17 @@ fun EventScreen(event: Event, navController: NavHostController){
     LazyColumn{
         item{
             NavigationBar(navController = navController)
-            Row(){
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+                    .background(Color.Gray)
+            ){
+                Button(onClick = {}){
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
+                        contentDescription = "back arrow"
+                    )
+                }
                 Button(onClick = {editable = !editable},
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
                     Text("Edit")
@@ -50,6 +62,9 @@ fun EventScreen(event: Event, navController: NavHostController){
                     navController.popBackStack()
                 }){
                     Text("Save")
+                }
+                Button(onClick = {}){
+                    Text("Delete")
                 }
             }
             Field(editable, "Title", event.title)
