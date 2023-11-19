@@ -46,7 +46,7 @@ fun NewEventScreen(navController: NavHostController) {
                     .fillMaxWidth()
             ){
                 Button(onClick = {
-                    navController.navigate(Routes.MonthView.route)
+                    navController.popBackStack()
                 }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
@@ -58,7 +58,7 @@ fun NewEventScreen(navController: NavHostController) {
                     textAlign = TextAlign.Center,
                     color = Color.White)
                 Button(onClick = {
-                    navController.navigate(Routes.MonthView.route)
+                    navController.popBackStack()
                 }){
                     Text("save")
                 }

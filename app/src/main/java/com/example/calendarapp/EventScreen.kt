@@ -47,7 +47,9 @@ fun EventScreen(event: Event, navController: NavHostController){
                 modifier = Modifier.fillMaxWidth()
                     .background(Color.Gray)
             ){
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "back arrow"
@@ -63,7 +65,9 @@ fun EventScreen(event: Event, navController: NavHostController){
                 }){
                     Text("Save")
                 }
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Text("Delete")
                 }
             }
