@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Routes.CreateEventView.route){
-                CreateEvent(navController)
+                NewEventScreen(navController)
             }
         }
 

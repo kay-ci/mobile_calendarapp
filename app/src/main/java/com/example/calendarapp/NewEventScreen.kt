@@ -31,11 +31,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDateTime
 
 @Composable
-fun NewEventScreen() {
+fun NewEventScreen(navController: NavHostController) {
     LazyColumn(){
         item(){
             Row(
@@ -44,7 +45,9 @@ fun NewEventScreen() {
                 modifier = Modifier.background(Color.Gray)
                     .fillMaxWidth()
             ){
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.navigate(Routes.MonthView.route)
+                }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "back arrow"
@@ -54,7 +57,9 @@ fun NewEventScreen() {
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White)
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.navigate(Routes.MonthView.route)
+                }){
                     Text("save")
                 }
             }
