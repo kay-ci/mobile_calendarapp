@@ -1,6 +1,7 @@
 package com.example.calendarapp
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -53,36 +55,52 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
-fun ViewPage(navController: NavHostController, selectedDate: LocalDate) {
-    val event2 = Event("Skiing",
-        LocalDateTime.parse("2023-11-11T04:00:00"),
-        LocalDateTime.parse("2023-11-11T06:30:00"),
-        "Going to ski","Mont Bruno")
+fun ViewPage(
+    navController: NavHostController,
+    selectedDate: LocalDate,
+    viewModel: CalendarViewModel
+) {
     val currentDate = remember { mutableStateOf(selectedDate) }
     val eventList = remember { mutableStateListOf<Event>() }
-    eventList.clear()
-    eventList.add(event2)
     DailyPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
         currentDate = currentDate,
-        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
-        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
+        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)
+            Log.d("Date", "Previous Day Clicked: ${currentDate.value}")},
+        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1)
+            Log.d("Date", "Next Day Clicked: ${currentDate.value}")},
         events = eventList,
-        navController = navController
+        navController = navController,
+        viewModel = viewModel,
     )
 }
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit,
-              events: MutableList<Event>, navController: NavHostController){
+fun DailyPage(
+    modifier: Modifier,
+    dayName: String,
+    currentDate: MutableState<LocalDate>,
+    onPreviousDayClick: () -> Unit,
+    onNextDayClick: () -> Unit,
+    events: MutableList<Event>,
+    navController: NavHostController,
+    viewModel: CalendarViewModel
+){
+    // Filter events based on the current date
+    val filteredEvents = viewModel.getEventsForDate(currentDate.value)
+
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = { /* Add navigation to add event */},
+        IconButton(onClick = { viewModel.addEvent(Event("Skiing",
+            currentDate.value,
+            LocalDateTime.parse("2023-11-11T04:00:00"),
+            LocalDateTime.parse("2023-11-11T06:30:00"),
+            "Going to ski","Mont Bruno"))},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -92,7 +110,7 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
                 modifier = Modifier.size(30.dp)
             )
         }
-        DailyEventsTimeline(events = events, modifier, navController)
+        DailyEventsTimeline(events = filteredEvents, modifier, navController)
     }
 }
 // Should be added at the top of every view to go to previous page.

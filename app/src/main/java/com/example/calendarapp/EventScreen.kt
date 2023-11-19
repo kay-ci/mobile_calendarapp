@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -28,6 +29,7 @@ import java.time.LocalDateTime
 @Composable
 fun EventView(navController: NavHostController) {
     val testEvent = Event("Skiing",
+        LocalDate.parse("2023-11-11"),
         LocalDateTime.parse("2023-11-11T04:00:00"),
         LocalDateTime.parse("2023-11-11T06:30:00"),
         "Going to ski","Mont Bruno")
