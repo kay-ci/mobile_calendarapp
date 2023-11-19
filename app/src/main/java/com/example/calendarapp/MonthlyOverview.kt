@@ -34,7 +34,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
@@ -127,7 +129,7 @@ fun WeekDaysHeader(list : List<String>, navController: NavHostController){
         content = {
 
             items(items = list) {cellContent ->
-                ContentItem(content = cellContent, navController = navController)
+                ContentItem(content = cellContent, navController = navController, 0, "")
             }
         }
     )
@@ -157,7 +159,9 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
             // Add the rest of the month days
             offsetList.addAll(list)
             items(items = offsetList) {cellContent ->
-                ContentItem(content = cellContent, navController)
+                ContentItem(content = cellContent, navController,
+                    currentYear = data.currentYear.value,
+                    currentMonth = data.currentMonth.value)
             }
         }
     )
@@ -166,7 +170,8 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 // The content inside each cell
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContentItem(content: String, navController: NavHostController){
+fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
+                currentMonth: String){
     if(content.isNotBlank()) {
         Card(
             modifier = Modifier
@@ -174,7 +179,23 @@ fun ContentItem(content: String, navController: NavHostController){
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
             ),
-            onClick = { navController.navigate(Routes.DailyView.route) }
+            onClick = {
+                if(currentYear !=0 && currentMonth != ""){
+                    // Parse the selected day to LocalDate
+                    val selectedDate = LocalDate.of(
+                        currentYear,
+                        Month.valueOf(currentMonth.uppercase()).value, // Use Month enum to get the month value
+                        content.toInt()
+                    )
+
+                    // Pass the selected date to DailyView
+                    navController.navigate("dailyView/$selectedDate") {
+                        launchSingleTop = true
+                        popUpTo(Routes.MonthView.route) { saveState = true }
+                    }
+                }
+            }
+
         ) {
             Column(
                 modifier = Modifier
