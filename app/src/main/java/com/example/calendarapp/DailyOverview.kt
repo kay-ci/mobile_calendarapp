@@ -49,8 +49,8 @@ import java.time.format.DateTimeFormatter
 val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
-@Preview(showBackground = true)
 @RequiresApi(Build.VERSION_CODES.O)
+@Preview(showBackground = true)
 @Composable
 
 fun ViewPage(){
