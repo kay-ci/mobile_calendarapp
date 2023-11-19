@@ -16,14 +16,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +47,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun HomeView(){
         val navController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val arguments = navBackStackEntry?.arguments
+        val selectedDate: LocalDate? = arguments?.getString("selectedDate")?.let {
+            LocalDate.parse(it)
+        }
         NavHost(navController = navController, startDestination = Routes.MonthView.route) {
+
 
             // Navigation graph destinations
             composable(Routes.MonthView.route){
@@ -52,7 +61,9 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Routes.DailyView.route){
-                ViewPage(navController)
+                if (selectedDate != null) {
+                    ViewPage(navController, selectedDate)
+                }
             }
 
             composable(Routes.EditEventView.route){
