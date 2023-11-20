@@ -26,7 +26,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    MonthView()
+                    //MonthView()
+                    val event2 = Event("Skiing",
+                        LocalDateTime.parse("2023-11-11T04:00:00"),
+                        LocalDateTime.parse("2023-11-11T06:30:00"),
+                        "Going to ski","Mont Bruno")
+                    EventScreen(event2)
                 }
             }
         }
