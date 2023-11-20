@@ -47,12 +47,11 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
         .padding(16.dp)
         .background(Color.White)
     ) {
-        val calendarViewModel : CalendarViewModel = viewModel()
 
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
-        Header(data = calendarViewModel)
+        Header(data = viewModel)
         WeekDaysHeader(list = list, navController)
-        MonthContent(data = calendarViewModel, list = calendarViewModel.daysInMonth.value, navController)
+        MonthContent(data = viewModel, list = viewModel.daysInMonth.value, navController)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -60,7 +59,6 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
             contentAlignment = Alignment.BottomEnd
         ){
             IconButton(onClick = {
-                // This does not work right now (need to make create view)
                 navController.navigate(Routes.NewMonthEventView.route + "/${viewModel.currentMonth.value}") },
                 modifier = Modifier
                     .fillMaxWidth()
