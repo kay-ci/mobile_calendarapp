@@ -29,13 +29,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     HomeView()
-                    //MonthView()
-                    val event2 = Event("Skiing",
-                        LocalDate.parse("2023-11-11"),
-                        LocalDateTime.parse("2023-11-11T04:00:00"),
-                        LocalDateTime.parse("2023-11-11T06:30:00"),
-                        "Going to ski","Mont Bruno")
-                    NewMonthEvent(1)
                 }
             }
         }
@@ -63,13 +56,16 @@ class MainActivity : ComponentActivity() {
                     ViewPage(navController, selectedDate, viewModel)
                 }
             }
-
             composable(Routes.EditEventView.route){
                 EventView(navController)
             }
 
-            composable(Routes.CreateEventView.route){
-                //CreateEvent(navController)
+            composable(Routes.NewMonthEventView.route){
+                NewMonthEventScreen(navController, 0)
+            }
+
+            composable(Routes.NewDayEventView.route){
+                NewDayEventScreen(navController, 0, 1)
             }
         }
 

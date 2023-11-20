@@ -45,6 +45,28 @@ fun EventView(navController: NavHostController) {
     EventScreen(event = testEvent, navController)
 }
 
+//Clean data to avoid malicious inputs
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Field(editable: Boolean, label: String, startingValue: String){
+    var text by rememberSaveable { mutableStateOf(startingValue) }
+    Column(){
+        Text(
+            text = "$label: ",
+            fontSize = 40.sp
+        )
+        TextField(
+            value = text,
+            onValueChange = { text = it},
+            maxLines = 1,
+            readOnly = !editable,
+            modifier = Modifier.fillMaxWidth(),
+            colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+            else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+        )
+    }
+}
+
 @Composable
 fun EventScreen(event: Event, navController: NavHostController){
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
@@ -57,7 +79,9 @@ fun EventScreen(event: Event, navController: NavHostController){
                 modifier = Modifier.fillMaxWidth()
                     .background(Color.Gray)
             ){
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "back arrow"
@@ -73,11 +97,13 @@ fun EventScreen(event: Event, navController: NavHostController){
                 }){
                     Text("Save")
                 }
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Text("Delete")
                 }
             }
-        }
+        } }
         item{
             Field(editable, "Title", event.title)
             Field(editable, "Description", event.description)
@@ -102,27 +128,6 @@ fun EventScreen(event: Event, navController: NavHostController){
     }
 }
 
-//Clean data to avoid malicious inputs
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Field(editable: Boolean, label: String, startingValue: String){
-    var text by rememberSaveable { mutableStateOf(startingValue) }
-    Column(){
-        Text(
-            text = "$label: ",
-            fontSize = 40.sp
-        )
-        TextField(
-            value = text,
-            onValueChange = { text = it},
-            maxLines = 1,
-            readOnly = !editable,
-            modifier = Modifier.fillMaxWidth(),
-            colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
-                else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
-        )
-    }
-}
 
 // Create event view maybe put in another file
 @Composable

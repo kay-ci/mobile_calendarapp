@@ -68,7 +68,7 @@ fun MonthView(navController: NavHostController) {
         ){
             IconButton(onClick = {
                 // This does not work right now (need to make create view)
-                navController.navigate(Routes.CreateEventView.route) },
+                navController.navigate(Routes.NewMonthEventView.route) },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
