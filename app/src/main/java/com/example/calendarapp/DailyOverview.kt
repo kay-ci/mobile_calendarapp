@@ -38,6 +38,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -66,10 +67,8 @@ fun ViewPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
         currentDate = currentDate,
-        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)
-            Log.d("Date", "Previous Day Clicked: ${currentDate.value}")},
-        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1)
-            Log.d("Date", "Next Day Clicked: ${currentDate.value}")},
+        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)},
+        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
         events = eventList,
         navController = navController,
         viewModel = viewModel,

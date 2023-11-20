@@ -16,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     HomeView()
+                    //MonthView()
+                    val event2 = Event("Skiing",
+                        LocalDate.parse("2023-11-11"),
+                        LocalDateTime.parse("2023-11-11T04:00:00"),
+                        LocalDateTime.parse("2023-11-11T06:30:00"),
+                        "Going to ski","Mont Bruno")
+                    NewMonthEvent(1)
                 }
             }
         }
@@ -45,7 +53,6 @@ class MainActivity : ComponentActivity() {
         }
         NavHost(navController = navController, startDestination = Routes.MonthView.route) {
 
-
             // Navigation graph destinations
             composable(Routes.MonthView.route){
                 MonthView(navController)
@@ -62,7 +69,7 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Routes.CreateEventView.route){
-                CreateEvent(navController)
+                //CreateEvent(navController)
             }
         }
 

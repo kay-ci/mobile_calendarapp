@@ -1,8 +1,17 @@
 package com.example.calendarapp
 
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -43,6 +52,17 @@ fun EventScreen(event: Event, navController: NavHostController){
         item{
             NavigationBar(navController = navController)
             Row(){
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+                    .background(Color.Gray)
+            ){
+                Button(onClick = {}){
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
+                        contentDescription = "back arrow"
+                    )
+                }
                 Button(onClick = {editable = !editable},
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
                     Text("Edit")
@@ -53,11 +73,31 @@ fun EventScreen(event: Event, navController: NavHostController){
                 }){
                     Text("Save")
                 }
+                Button(onClick = {}){
+                    Text("Delete")
+                }
             }
+        }
+        item{
             Field(editable, "Title", event.title)
-            Field(editable, "start", ""+event.startTime);
-            Field(editable, "end", ""+event.endTime);
             Field(editable, "Description", event.description)
+            Field(editable, "Location", event.location)
+        }
+        item{
+            Text("Start Time:", fontSize = 40.sp)
+            Field(editable, "Day", event.startTime.dayOfMonth.toString())
+            Field(editable, "Month", event.startTime.month.toString())
+            Field(editable, "Year", event.startTime.year.toString())
+            Field(editable, "Hour", event.startTime.hour.toString())
+            Field(editable, "Minute", event.startTime.minute.toString())
+        }
+        item{
+            Text("End Time:", fontSize = 40.sp)
+            Field(editable, "Day", event.endTime.dayOfMonth.toString())
+            Field(editable, "Month", event.endTime.month.toString())
+            Field(editable, "Year", event.endTime.year.toString())
+            Field(editable, "Hour", event.endTime.hour.toString())
+            Field(editable, "Minute", event.endTime.minute.toString())
         }
     }
 }
