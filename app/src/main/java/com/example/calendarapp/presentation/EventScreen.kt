@@ -47,7 +47,7 @@ fun EventView(navController: NavHostController) {
 //Clean data to avoid malicious inputs
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Field(editable: Boolean, label: String, startingValue: String){
+fun Field(editable: Boolean, label: String?, startingValue: String?){
     var text by rememberSaveable { mutableStateOf(startingValue) }
     Column(){
         Text(
@@ -55,7 +55,7 @@ fun Field(editable: Boolean, label: String, startingValue: String){
             fontSize = 40.sp
         )
         TextField(
-            value = text,
+            value = text!!,
             onValueChange = { text = it},
             maxLines = 1,
             readOnly = !editable,

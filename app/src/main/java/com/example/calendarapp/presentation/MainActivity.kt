@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
             // Navigation graph destinations
             composable(Routes.MonthView.route){
-                MonthView(navController)
+                MonthView(navController, viewModel)
             }
 
             composable(Routes.DailyView.route){
@@ -60,8 +60,9 @@ class MainActivity : ComponentActivity() {
                 EventView(navController)
             }
 
-            composable(Routes.NewMonthEventView.route){
-                NewMonthEventScreen(navController, 0)
+            composable(Routes.NewMonthEventView.route + "/{month}"){
+                backStackEntry -> val month = backStackEntry.arguments?.getString("month")
+                NewMonthEventScreen(navController, month)
             }
 
             composable(Routes.NewDayEventView.route){

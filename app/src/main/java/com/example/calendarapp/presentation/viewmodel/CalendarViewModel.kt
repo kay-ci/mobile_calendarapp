@@ -32,6 +32,42 @@ class CalendarViewModel () : ViewModel() {
         updateFirstWeekDay()
     }
 
+    fun getMonthNumber(month: String): Int {
+        return when (month) {
+            "January" -> 1
+            "February" -> 2
+            "March" -> 3
+            "April" -> 4
+            "May" -> 5
+            "June" -> 6
+            "July" -> 7
+            "August" -> 8
+            "September" -> 9
+            "October" -> 10
+            "November" -> 11
+            "December" -> 12
+            else -> -1 // Return -1 for invalid input
+        }
+    }
+
+    fun getMonthName(monthNumber: Int): String {
+        return when (monthNumber) {
+            1 -> "January"
+            2 -> "February"
+            3 -> "March"
+            4 -> "April"
+            5 -> "May"
+            6 -> "June"
+            7 -> "July"
+            8 -> "August"
+            9 -> "September"
+            10 -> "October"
+            11 -> "November"
+            12 -> "December"
+            else -> "Invalid month number"
+        }
+    }
+
     private fun updateMonthYear() {
         val month = when (calendar.get(Calendar.MONTH)){
             0 -> "January"

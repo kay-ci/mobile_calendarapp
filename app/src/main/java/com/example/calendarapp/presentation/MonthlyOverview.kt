@@ -41,14 +41,7 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
-@Preview
-fun ShowMonthView(){
-    val navController = rememberNavController()
-    MonthView(navController)
-}
-
-@Composable
-fun MonthView(navController: NavHostController) {
+fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
     Column (modifier = Modifier
         .fillMaxSize()
         .padding(16.dp)
@@ -68,7 +61,7 @@ fun MonthView(navController: NavHostController) {
         ){
             IconButton(onClick = {
                 // This does not work right now (need to make create view)
-                navController.navigate(Routes.NewMonthEventView.route) },
+                navController.navigate(Routes.NewMonthEventView.route + "/${viewModel.currentMonth.value}") },
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
