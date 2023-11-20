@@ -36,7 +36,7 @@ import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDateTime
 
 @Composable
-fun NewEventScreen(navController: NavHostController) {
+fun NewMonthEventScreen(navController: NavHostController, month: Int) {
     LazyColumn(){
         item(){
             Row(
@@ -66,9 +66,64 @@ fun NewEventScreen(navController: NavHostController) {
         }//use TimeDialog
         item(){
             Field(true, "Title", "")
-            Field(true, "start", "")
-            Field(true, "end", "")
+        }
+        item(){
             Field(true, "description", "")
+        }
+        item(){
+            Text("Start Time:", fontSize = 40.sp)
+            Field(true, "Day", "")
+            Field(false, "Month", month.toString())
+            Field(true, "Year", "")
+            Field(true, "Hour", "")
+            Field(true, "Minute", "")
+        }
+    }
+}
+
+
+@Composable
+fun NewDayEventScreen(navController: NavHostController, month: Int, day: Int = -1) {
+    LazyColumn(){
+        item(){
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.background(Color.Gray)
+                    .fillMaxWidth()
+            ){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
+                        contentDescription = "back arrow"
+                    )
+                }
+                Text("New Event",
+                    fontSize = 40.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.White)
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
+                    Text("save")
+                }
+            }
+        }//use TimeDialog
+        item(){
+            Field(true, "Title", "")
+        }
+        item(){
+            Field(true, "description", "")
+        }
+        item(){
+            Text("Start Time:", fontSize = 40.sp)
+            Field(false, "Day", month.toString());
+            Field(false, "Month", month.toString())
+            Field(true, "Year", "")
+            Field(true, "Hour", "")
+            Field(true, "Minute", "")
         }
     }
 }

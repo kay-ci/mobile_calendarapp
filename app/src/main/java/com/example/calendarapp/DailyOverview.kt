@@ -82,7 +82,7 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = { /* Add navigation to add event */},
+        IconButton(onClick = {navController.navigate(Routes.NewDayEventView.route)},
             modifier = Modifier
                 .align(Alignment.End)
         ) {

@@ -59,8 +59,12 @@ class MainActivity : ComponentActivity() {
                 EventView(navController)
             }
 
-            composable(Routes.CreateEventView.route){
-                NewEventScreen(navController)
+            composable(Routes.NewMonthEventView.route){
+                NewMonthEventScreen(navController, 0)
+            }
+
+            composable(Routes.NewDayEventView.route){
+                NewDayEventScreen(navController, 0, 1)
             }
         }
 

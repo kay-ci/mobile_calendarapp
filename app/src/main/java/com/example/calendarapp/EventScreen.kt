@@ -71,10 +71,27 @@ fun EventScreen(event: Event, navController: NavHostController){
                     Text("Delete")
                 }
             }
+        }
+        item{
             Field(editable, "Title", event.title)
-            Field(editable, "start", ""+event.startTime);
-            Field(editable, "end", ""+event.endTime);
             Field(editable, "Description", event.description)
+            Field(editable, "Location", event.location)
+        }
+        item{
+            Text("Start Time:", fontSize = 40.sp)
+            Field(editable, "Day", event.startTime.dayOfMonth.toString())
+            Field(editable, "Month", event.startTime.month.toString())
+            Field(editable, "Year", event.startTime.year.toString())
+            Field(editable, "Hour", event.startTime.hour.toString())
+            Field(editable, "Minute", event.startTime.minute.toString())
+        }
+        item{
+            Text("End Time:", fontSize = 40.sp)
+            Field(editable, "Day", event.endTime.dayOfMonth.toString())
+            Field(editable, "Month", event.endTime.month.toString())
+            Field(editable, "Year", event.endTime.year.toString())
+            Field(editable, "Hour", event.endTime.hour.toString())
+            Field(editable, "Minute", event.endTime.minute.toString())
         }
     }
 }
