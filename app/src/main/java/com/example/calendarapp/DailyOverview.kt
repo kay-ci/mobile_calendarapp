@@ -95,11 +95,7 @@ fun DailyPage(
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = { viewModel.addEvent(Event("Skiing",
-            currentDate.value,
-            LocalDateTime.parse("2023-11-11T04:00:00"),
-            LocalDateTime.parse("2023-11-11T06:30:00"),
-            "Going to ski","Mont Bruno"))},
+        IconButton(onClick = {navController.navigate(Routes.NewDayEventView.route)},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
