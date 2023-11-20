@@ -31,11 +31,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDateTime
 
 @Composable
-fun NewMonthEvent(month: Int, day: Int = -1) {
+fun NewMonthEventScreen(navController: NavHostController, month: Int) {
     LazyColumn(){
         item(){
             Row(
@@ -44,7 +45,9 @@ fun NewMonthEvent(month: Int, day: Int = -1) {
                 modifier = Modifier.background(Color.Gray)
                     .fillMaxWidth()
             ){
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
                         contentDescription = "back arrow"
@@ -54,7 +57,9 @@ fun NewMonthEvent(month: Int, day: Int = -1) {
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White)
-                Button(onClick = {}){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
                     Text("save")
                 }
             }
@@ -67,12 +72,54 @@ fun NewMonthEvent(month: Int, day: Int = -1) {
         }
         item(){
             Text("Start Time:", fontSize = 40.sp)
-            if(day > 0){
-                Field(false, "Day", month.toString());
+            Field(true, "Day", "")
+            Field(false, "Month", month.toString())
+            Field(true, "Year", "")
+            Field(true, "Hour", "")
+            Field(true, "Minute", "")
+        }
+    }
+}
+
+
+@Composable
+fun NewDayEventScreen(navController: NavHostController, month: Int, day: Int = -1) {
+    LazyColumn(){
+        item(){
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.background(Color.Gray)
+                    .fillMaxWidth()
+            ){
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
+                        contentDescription = "back arrow"
+                    )
+                }
+                Text("New Event",
+                    fontSize = 40.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.White)
+                Button(onClick = {
+                    navController.popBackStack()
+                }){
+                    Text("save")
+                }
             }
-            else{
-                Field(true, "Day", "")
-            }
+        }//use TimeDialog
+        item(){
+            Field(true, "Title", "")
+        }
+        item(){
+            Field(true, "description", "")
+        }
+        item(){
+            Text("Start Time:", fontSize = 40.sp)
+            Field(false, "Day", month.toString());
             Field(false, "Month", month.toString())
             Field(true, "Year", "")
             Field(true, "Hour", "")
