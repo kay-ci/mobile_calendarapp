@@ -13,7 +13,9 @@ import java.time.LocalDate
 class CalendarViewModel () : ViewModel() {
     private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
 
-    private val _currentDay = mutableStateOf("")
+    private var _currentDay = 1
+    var currentDay = _currentDay
+
     private val _currentMonth = mutableStateOf("")
     val currentMonth: MutableState<String> = _currentMonth
 
@@ -27,6 +29,7 @@ class CalendarViewModel () : ViewModel() {
     val firstWeekDay : MutableState<Int> = _firstWeekDay
 
     init {
+        _currentDay = calendar.get(Calendar.DAY_OF_MONTH)
         updateMonthYear()
         updateDaysOfMonth()
         updateFirstWeekDay()
