@@ -1,4 +1,4 @@
-package com.example.calendarapp
+package com.example.calendarapp.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Month
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 

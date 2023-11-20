@@ -1,7 +1,6 @@
-package com.example.calendarapp
+package com.example.calendarapp.presentation
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,10 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.calendarapp.domain.Event
+import com.example.calendarapp.R
+import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -63,6 +63,7 @@ fun ViewPage(
 ) {
     val currentDate = remember { mutableStateOf(selectedDate) }
     val eventList = remember { mutableStateListOf<Event>() }
+
     DailyPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
@@ -95,7 +96,14 @@ fun DailyPage(
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = {navController.navigate(Routes.NewDayEventView.route)},
+        IconButton(onClick = {navController.navigate(Routes.NewDayEventView.route)
+            viewModel.addEvent(
+                Event("Skiing",
+                LocalDate.parse("2023-11-11"),
+                LocalDateTime.parse("2023-11-11T04:00:00"),
+                LocalDateTime.parse("2023-11-11T06:30:00"),
+                "Going to ski","Mont Bruno")
+            )},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -128,7 +136,7 @@ fun NavigationBar(navController: NavHostController) {
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier, navController: NavHostController){
+fun DailyEventsTimeline(events: List<Event>, modifier: Modifier = Modifier, navController: NavHostController){
     Column(modifier = modifier
         .verticalScroll(rememberScrollState())
         .fillMaxWidth()) {
@@ -179,7 +187,7 @@ private fun ListEvents(events: List<Event>, navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier, navController: NavHostController) {
+fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier, navController: NavHostController) {
     Card(
         modifier = modifier
             .height(eventLength.dp)
@@ -197,7 +205,9 @@ fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier, 
                 color = Color.Black
             )
             Text(
-                text = "${event.startTime.format(EventFormatter)} - ${event.endTime.format(EventFormatter)}",
+                text = "${event.startTime.format(EventFormatter)} - ${event.endTime.format(
+                    EventFormatter
+                )}",
                 color = Color.Black
             )
         }

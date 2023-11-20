@@ -1,17 +1,13 @@
-package com.example.calendarapp
+package com.example.calendarapp.presentation
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -30,11 +26,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.calendarapp.domain.Event
+import com.example.calendarapp.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 
 //
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventView(navController: NavHostController) {
     val testEvent = Event("Skiing",

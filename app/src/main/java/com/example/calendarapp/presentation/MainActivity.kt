@@ -1,4 +1,4 @@
-package com.example.calendarapp
+package com.example.calendarapp.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -14,9 +14,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

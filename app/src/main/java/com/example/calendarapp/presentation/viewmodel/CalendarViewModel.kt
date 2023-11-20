@@ -1,4 +1,4 @@
-package com.example.calendarapp
+package com.example.calendarapp.presentation.viewmodel
 
 import android.icu.util.Calendar
 import android.icu.util.ULocale
@@ -6,12 +6,14 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.calendarapp.domain.Event
 import java.time.LocalDate
 
 
 class CalendarViewModel () : ViewModel() {
     private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
 
+    private val _currentDay = mutableStateOf("")
     private val _currentMonth = mutableStateOf("")
     val currentMonth: MutableState<String> = _currentMonth
 
