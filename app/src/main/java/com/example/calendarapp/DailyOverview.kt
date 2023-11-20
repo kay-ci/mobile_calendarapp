@@ -1,10 +1,9 @@
 package com.example.calendarapp
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +20,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +36,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -50,36 +54,52 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
 @Composable
 
-fun ViewPage(){
-    val event2 = Event("Skiing",
-        LocalDateTime.parse("2023-11-11T04:00:00"),
-        LocalDateTime.parse("2023-11-11T06:30:00"),
-        "Going to ski","Mont Bruno")
-    val currentDate = remember { mutableStateOf(LocalDate.now()) }
+fun ViewPage(
+    navController: NavHostController,
+    selectedDate: LocalDate,
+    viewModel: CalendarViewModel
+) {
+    val currentDate = remember { mutableStateOf(selectedDate) }
     val eventList = remember { mutableStateListOf<Event>() }
-    eventList.clear()
-    eventList.add(event2)
     DailyPage(
         modifier = Modifier,
         dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
         currentDate = currentDate,
-        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1) },
+        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)},
         onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
-        events = eventList
+        events = eventList,
+        navController = navController,
+        viewModel = viewModel,
     )
 }
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<LocalDate>, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit,
-              events: MutableList<Event>){
+fun DailyPage(
+    modifier: Modifier,
+    dayName: String,
+    currentDate: MutableState<LocalDate>,
+    onPreviousDayClick: () -> Unit,
+    onNextDayClick: () -> Unit,
+    events: MutableList<Event>,
+    navController: NavHostController,
+    viewModel: CalendarViewModel
+){
+    // Filter events based on the current date
+    val filteredEvents = viewModel.getEventsForDate(currentDate.value)
+
     Column(modifier = Modifier.background(Color.White)){
+        NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = { /* Add navigation to add event */},
+        IconButton(onClick = { viewModel.addEvent(Event("Skiing",
+            currentDate.value,
+            LocalDateTime.parse("2023-11-11T04:00:00"),
+            LocalDateTime.parse("2023-11-11T06:30:00"),
+            "Going to ski","Mont Bruno"))},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -89,13 +109,30 @@ fun DailyPage(modifier: Modifier, dayName: String, currentDate: MutableState<Loc
                 modifier = Modifier.size(30.dp)
             )
         }
-        DailyEventsTimeline(events = events)
+        DailyEventsTimeline(events = filteredEvents, modifier, navController)
     }
 }
-
+// Should be added at the top of every view to go to previous page.
+@Composable
+fun NavigationBar(navController: NavHostController) {
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .size(30.dp)
+        .background(MaterialTheme.colorScheme.primary)
+        .padding(5.dp),
+    ){
+        IconButton(onClick = { navController.popBackStack() }) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowLeft,
+                contentDescription = "Go to previous page",
+                modifier = Modifier.align(Alignment.CenterStart)
+            )
+        }
+    }
+}
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
+fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier, navController: NavHostController){
     Column(modifier = modifier
         .verticalScroll(rememberScrollState())
         .fillMaxWidth()) {
@@ -113,14 +150,14 @@ fun DailyEventsTimeline(events: List<Event>,  modifier: Modifier = Modifier){
                     )
                 }
             }
-            ListEvents(events)
+            ListEvents(events, navController = navController)
         }
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-private fun ListEvents(events: List<Event>) {
+private fun ListEvents(events: List<Event>, navController: NavHostController) {
     //Column for the displaying the events
     Column {
         // Sort events by start time to ensure accurate placement
@@ -137,21 +174,23 @@ private fun ListEvents(events: List<Event>) {
                     .fillMaxWidth()
             )
             val eventLength = (eventDuration.toDouble() / 60) * 42
-            EventSpace(event = event, eventLength = eventLength)
+            EventSpace(event = event, eventLength = eventLength, navController = navController)
             previousEndEvent = startEvent + eventDuration.toInt()
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier) {
-    Box(
+fun EventSpace(event: Event, eventLength: Double,modifier: Modifier = Modifier, navController: NavHostController) {
+    Card(
         modifier = modifier
             .height(eventLength.dp)
             .fillMaxWidth()
             .background(Color.LightGray, shape = RoundedCornerShape(7.dp))
-            .padding(horizontal = 8.dp, vertical = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        onClick = { navController.navigate(Routes.EditEventView.route) }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)

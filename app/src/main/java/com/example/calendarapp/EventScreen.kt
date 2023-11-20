@@ -1,5 +1,9 @@
 package com.example.calendarapp
 
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,37 +13,45 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Color.Companion.Blue
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.time.format.TextStyle
+import androidx.navigation.NavHostController
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+
+//
+@Composable
+fun EventView(navController: NavHostController) {
+    val testEvent = Event("Skiing",
+        LocalDate.parse("2023-11-11"),
+        LocalDateTime.parse("2023-11-11T04:00:00"),
+        LocalDateTime.parse("2023-11-11T06:30:00"),
+        "Going to ski","Mont Bruno")
+    EventScreen(event = testEvent, navController)
+}
 
 @Composable
-fun EventScreen(event: Event){
+fun EventScreen(event: Event, navController: NavHostController){
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     LazyColumn{
         item{
+            NavigationBar(navController = navController)
+            Row(){
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
@@ -55,7 +67,10 @@ fun EventScreen(event: Event){
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
                     Text("Edit")
                 }
-                Button(onClick = {}){
+                Button(onClick = {
+                    /* TODO validation on the fields and then go to previous page*/
+                    navController.popBackStack()
+                }){
                     Text("Save")
                 }
                 Button(onClick = {}){
@@ -107,4 +122,10 @@ fun Field(editable: Boolean, label: String, startingValue: String){
                 else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
         )
     }
+}
+
+// Create event view maybe put in another file
+@Composable
+fun CreateEvent(navController: NavHostController){
+    NavigationBar(navController = navController)
 }

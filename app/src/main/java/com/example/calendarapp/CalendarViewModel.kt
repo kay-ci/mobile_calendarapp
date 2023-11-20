@@ -3,8 +3,10 @@ package com.example.calendarapp
 import android.icu.util.Calendar
 import android.icu.util.ULocale
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import java.time.LocalDate
 
 
 class CalendarViewModel () : ViewModel() {
@@ -73,6 +75,15 @@ class CalendarViewModel () : ViewModel() {
 
     private fun updateFirstWeekDay(){
         firstWeekDay.value = calendar.get(Calendar.DAY_OF_WEEK)
+    }
+
+    private val _events = mutableStateListOf<Event>()
+    val events: List<Event> = _events
+    fun getEventsForDate(date: LocalDate): List<Event> {
+        return _events.filter { it.date == date }
+    }
+    fun addEvent(event: Event){
+        _events.add(event)
     }
 
 }
