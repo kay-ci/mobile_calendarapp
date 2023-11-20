@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import com.example.calendarapp.R
 
 @Composable
-fun NewMonthEventScreen(navController: NavHostController, month: Int) {
+fun NewMonthEventScreen(navController: NavHostController, month: String?) {
     LazyColumn(){
         item(){
             Row(
@@ -56,7 +56,7 @@ fun NewMonthEventScreen(navController: NavHostController, month: Int) {
         item(){
             Text("Start Time:", fontSize = 40.sp)
             Field(true, "Day", "")
-            Field(false, "Month", month.toString())
+            Field(false, "Month", month)
             Field(true, "Year", "")
             Field(true, "Hour", "")
             Field(true, "Minute", "")
