@@ -35,7 +35,7 @@ import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDateTime
 
 @Composable
-fun NewEventScreen() {
+fun NewMonthEvent(month: Int, day: Int = -1) {
     LazyColumn(){
         item(){
             Row(
@@ -61,9 +61,22 @@ fun NewEventScreen() {
         }//use TimeDialog
         item(){
             Field(true, "Title", "")
-            Field(true, "start", "")
-            Field(true, "end", "")
+        }
+        item(){
             Field(true, "description", "")
+        }
+        item(){
+            Text("Start Time:", fontSize = 40.sp)
+            if(day > 0){
+                Field(false, "Day", month.toString());
+            }
+            else{
+                Field(true, "Day", "")
+            }
+            Field(false, "Month", month.toString())
+            Field(true, "Year", "")
+            Field(true, "Hour", "")
+            Field(true, "Minute", "")
         }
     }
 }

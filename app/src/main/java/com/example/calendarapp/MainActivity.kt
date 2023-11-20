@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
                         LocalDateTime.parse("2023-11-11T04:00:00"),
                         LocalDateTime.parse("2023-11-11T06:30:00"),
                         "Going to ski","Mont Bruno")
-                    EventScreen(event2)
+                    NewMonthEvent(1)
                 }
             }
         }
