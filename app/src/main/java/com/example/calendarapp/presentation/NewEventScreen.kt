@@ -210,10 +210,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
     var description by rememberSaveable { mutableStateOf("") }
     var title by rememberSaveable { mutableStateOf("") }
 
-    val currentDate = viewModel.selectedDate.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
-    val day = viewModel.selectedDate.format(DateTimeFormatter.ofPattern("d"))
-    val month = viewModel.selectedDate.format(DateTimeFormatter.ofPattern("MMMM"))
-    val year = viewModel.selectedDate.format(DateTimeFormatter.ofPattern("yyyy"))
+    val currentDate = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     LazyColumn(){
         item(){
             Row(
