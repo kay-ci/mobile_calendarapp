@@ -190,7 +190,7 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
             .fillMaxWidth()
             .background(Color.LightGray, shape = RoundedCornerShape(7.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
-        onClick = { navController.navigate(Routes.EditEventView.route) }
+        onClick = { navController.navigate(Routes.EditEventView.route + "/${event.startTime}") }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)

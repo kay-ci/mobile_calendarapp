@@ -126,4 +126,8 @@ class CalendarViewModel () : ViewModel() {
         _events.add(event)
     }
 
+    fun removeEvent(index: Int){
+        _events.removeAt(index)
+    }
+
 }

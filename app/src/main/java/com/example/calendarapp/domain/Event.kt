@@ -9,4 +9,6 @@ data class Event(
     val endTime: LocalDateTime,
     val description: String,
     val location : String
+
+    //we will use startTime as unique ID
 )

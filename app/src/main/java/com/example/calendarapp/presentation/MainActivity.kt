@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.calendarapp.domain.Event
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDate
@@ -54,8 +55,16 @@ class MainActivity : ComponentActivity() {
                     ViewPage(navController, LocalDate.parse(selectedDate), viewModel)
                 }
             }
-            composable(Routes.EditEventView.route){
-                EventView(navController)
+            composable(Routes.EditEventView.route+"/{startTime}"){
+                backStackEntry -> val startTime = backStackEntry.arguments?.getString("startTime")
+                var theEvent: Event? = null
+                viewModel.events.forEach {
+                    event ->
+                    if(event.startTime.toString() == startTime){
+                        theEvent = event
+                    }
+                }
+                theEvent?.let { EventScreen(it, navController, viewModel) }
             }
 
             composable(Routes.NewMonthEventView.route + "/{month}"){
