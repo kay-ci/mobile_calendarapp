@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
             composable(Routes.NewDayEventView.route + "/{date}"){
                 backStackEntry -> val date = backStackEntry.arguments?.getString("date")
                 if(date != null){
-                    NewDayEventScreen(navController, LocalDate.parse(date))
+                    NewDayEventScreen(navController, LocalDate.parse(date), viewModel)
                 }
             }
         }
