@@ -70,10 +70,8 @@ fun ViewPage(
         currentDate = currentDate,
         onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)},
         onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
-        events = eventList,
         navController = navController,
-        viewModel = viewModel,
-        selectedDate = selectedDate
+        viewModel = viewModel
     )
 }
 
@@ -86,10 +84,8 @@ fun DailyPage(
     currentDate: MutableState<LocalDate>,
     onPreviousDayClick: () -> Unit,
     onNextDayClick: () -> Unit,
-    events: MutableList<Event>,
     navController: NavHostController,
-    viewModel: CalendarViewModel,
-    selectedDate: LocalDate
+    viewModel: CalendarViewModel
 ){
     // Filter events based on the current date
     val filteredEvents = viewModel.getEventsForDate(currentDate.value)
@@ -99,7 +95,7 @@ fun DailyPage(
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
-            navController.navigate(Routes.NewDayEventView.route+"/$selectedDate")},
+            navController.navigate(Routes.NewDayEventView.route+"/${currentDate.value}")},
             modifier = Modifier
                 .align(Alignment.End)
         ) {

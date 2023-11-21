@@ -130,4 +130,15 @@ class CalendarViewModel () : ViewModel() {
         _events.removeAt(index)
     }
 
+    fun containsEvent(theEvent: Event): Boolean{
+        var output: Boolean = false
+        _events.forEach{event ->
+            if(event.startTime == theEvent.startTime){
+                output = true
+            }
+        }
+
+        return output
+    }
+
 }

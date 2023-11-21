@@ -69,13 +69,16 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     color = Color.White)
                 Button(onClick = {
                     try{
-                        val start = LocalDateTime.of(2023, 11, 20, startHour.toInt(), startMinute.toInt())
-                        val end = LocalDateTime.of(2023, 11, 20, endHour.toInt(), endHour.toInt())
-                        if(end <= start){
-                            throw Exception()
-                        }
                         val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
+                        val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
+                        val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endHour.toInt())
+                        if(end <= start){
+                            throw Exception("chronologically impossible")
+                        }
                         val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location)
+                        if(viewModel.containsEvent(newEvent)){
+                            throw Exception("time is already used by another event")
+                        }
                         viewModel.addEvent(newEvent)
                         navController.popBackStack()
                     }
@@ -233,13 +236,16 @@ fun NewDayEventScreen(navController: NavHostController, date: LocalDate, viewMod
                     color = Color.White)
                 Button(onClick = {
                     try{
-                        val start = LocalDateTime.of(2023, 11, 20, startHour.toInt(), startMinute.toInt())
-                        val end = LocalDateTime.of(2023, 11, 20, endHour.toInt(), endMinute.toInt())
+                        val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
+                        val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
+                        val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
                             throw Exception()
                         }
-                        val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
                         val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location)
+                        if(viewModel.containsEvent(newEvent)){
+                            throw Exception()
+                        }
                         viewModel.addEvent(newEvent)
                         navController.popBackStack()
                     }
