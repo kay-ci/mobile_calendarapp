@@ -180,7 +180,7 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                     )
 
                     // Pass the selected date to DailyView
-                    navController.navigate("dailyView/$selectedDate") {
+                    navController.navigate(Routes.DailyView.route+"/$selectedDate") {
                         launchSingleTop = true
                         popUpTo(Routes.MonthView.route) { saveState = true }
                     }

@@ -70,9 +70,8 @@ fun ViewPage(
         currentDate = currentDate,
         onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)},
         onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
-        events = eventList,
         navController = navController,
-        viewModel = viewModel,
+        viewModel = viewModel
     )
 }
 
@@ -85,7 +84,6 @@ fun DailyPage(
     currentDate: MutableState<LocalDate>,
     onPreviousDayClick: () -> Unit,
     onNextDayClick: () -> Unit,
-    events: MutableList<Event>,
     navController: NavHostController,
     viewModel: CalendarViewModel
 ){
@@ -96,14 +94,8 @@ fun DailyPage(
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
         Spacer(modifier = Modifier.height(10.dp))
-        IconButton(onClick = {navController.navigate(Routes.NewDayEventView.route)
-            viewModel.addEvent(
-                Event("Skiing",
-                LocalDate.parse("2023-11-11"),
-                LocalDateTime.parse("2023-11-11T04:00:00"),
-                LocalDateTime.parse("2023-11-11T06:30:00"),
-                "Going to ski","Mont Bruno")
-            )},
+        IconButton(onClick = {
+            navController.navigate(Routes.NewDayEventView.route+"/${currentDate.value}")},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -194,7 +186,7 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
             .fillMaxWidth()
             .background(Color.LightGray, shape = RoundedCornerShape(7.dp))
             .padding(horizontal = 8.dp, vertical = 8.dp),
-        onClick = { navController.navigate(Routes.EditEventView.route) }
+        onClick = { navController.navigate(Routes.EditEventView.route + "/${event.startTime}") }
     ) {
         Column(
             modifier = Modifier.padding(8.dp)
@@ -215,7 +207,7 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier, dayName: String,onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
+fun DaySelect(modifier: Modifier = Modifier, dayName: String, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
     Row(modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 12.dp),

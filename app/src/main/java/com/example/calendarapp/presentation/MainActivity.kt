@@ -12,7 +12,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
-import dagger.hilt.android.AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +34,7 @@ class MainActivity : ComponentActivity() {
         val viewModel: CalendarViewModel = viewModel()
         val navController = rememberNavController()
         NavigationComponent(navController, viewModel)
+
     }
 }
 
