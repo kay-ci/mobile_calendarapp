@@ -1,8 +1,10 @@
 package com.example.calendarapp
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,7 +28,6 @@ import org.junit.Test
 class NavigationTests {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
-
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
     private lateinit var navController: NavHostController
@@ -49,7 +50,7 @@ class NavigationTests {
 
             waitForIdle()
             val currentRoute = navController.currentDestination?.route
-            Assert.assertEquals(currentRoute, Routes.DailyView.route)
+            Assert.assertEquals(currentRoute, Routes.DailyView.route + "/{selectedDate}")
         }
     }
 }
