@@ -18,11 +18,8 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
             MonthView(navController, viewModel)
         }
 
-        composable(Routes.DailyView.route + "/{selectedDate}"){
-                backStackEntry -> val selectedDate = backStackEntry.arguments?.getString("selectedDate")
-            if (selectedDate != null) {
-                ViewPage(navController, LocalDate.parse(selectedDate), viewModel)
-            }
+        composable(Routes.DailyView.route){
+            ViewPage(navController, viewModel)
         }
         composable(Routes.EditEventView.route+"/{startTime}"){
                 backStackEntry -> val startTime = backStackEntry.arguments?.getString("startTime")
@@ -41,11 +38,8 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
             NewMonthEventScreen(navController, viewModel)
         }
 
-        composable(Routes.NewDayEventView.route + "/{date}"){
-                backStackEntry -> val date = backStackEntry.arguments?.getString("date")
-            if(date != null){
-                NewDayEventScreen(navController, LocalDate.parse(date), viewModel)
-            }
+        composable(Routes.NewDayEventView.route){
+            NewDayEventScreen(navController, viewModel)
         }
     }
 

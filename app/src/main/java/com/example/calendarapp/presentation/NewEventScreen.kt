@@ -195,7 +195,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewDayEventScreen(navController: NavHostController, date: LocalDate, viewModel: CalendarViewModel) {
+fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewModel) {
     var startMinute by rememberSaveable { mutableStateOf("") }
     var startHour by rememberSaveable { mutableStateOf("") }
     var endMinute by rememberSaveable { mutableStateOf("") }
@@ -204,10 +204,7 @@ fun NewDayEventScreen(navController: NavHostController, date: LocalDate, viewMod
     var description by rememberSaveable { mutableStateOf("") }
     var title by rememberSaveable { mutableStateOf("") }
 
-    val currentDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
-    val day = date.format(DateTimeFormatter.ofPattern("d"))
-    val month = date.format(DateTimeFormatter.ofPattern("MMMM"))
-    val year = date.format(DateTimeFormatter.ofPattern("yyyy"))
+    val currentDate = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     LazyColumn(){
         item(){
             NavigationBar(navController = navController)
@@ -224,7 +221,7 @@ fun NewDayEventScreen(navController: NavHostController, date: LocalDate, viewMod
                     color = Color.White)
                 Button(onClick = {
                     try{
-                        val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
+                        val date = LocalDate.parse(viewModel.selectedDate)
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
                         val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){

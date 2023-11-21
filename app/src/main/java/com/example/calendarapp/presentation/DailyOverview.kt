@@ -59,18 +59,10 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 fun ViewPage(
     navController: NavHostController,
-    selectedDate: LocalDate,
     viewModel: CalendarViewModel
 ) {
-    val currentDate = remember { mutableStateOf(selectedDate) }
-    val eventList = remember { mutableStateListOf<Event>() }
-
     DailyPage(
         modifier = Modifier,
-        dayName = currentDate.value.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy")),
-        currentDate = currentDate,
-        onPreviousDayClick = { currentDate.value = currentDate.value.minusDays(1)},
-        onNextDayClick = { currentDate.value = currentDate.value.plusDays(1) },
         navController = navController,
         viewModel = viewModel
     )
@@ -81,22 +73,18 @@ fun ViewPage(
 @Composable
 fun DailyPage(
     modifier: Modifier,
-    dayName: String,
-    currentDate: MutableState<LocalDate>,
-    onPreviousDayClick: () -> Unit,
-    onNextDayClick: () -> Unit,
     navController: NavHostController,
     viewModel: CalendarViewModel
 ){
     // Filter events based on the current date
-    val filteredEvents = viewModel.getEventsForDate(currentDate.value)
-
+    val filteredEvents = viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
+    val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
-        DaySelect(modifier = modifier,dayName = dayName, onPreviousDayClick = onPreviousDayClick, onNextDayClick = onNextDayClick )
+        DaySelect(modifier = modifier,dayName = dayName, viewModel)
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
-            navController.navigate(Routes.NewDayEventView.route+"/${currentDate.value}")},
+            navController.navigate(Routes.NewDayEventView.route)},
             modifier = Modifier
                 .align(Alignment.End)
         ) {
@@ -208,13 +196,15 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier, dayName: String, onPreviousDayClick: () -> Unit, onNextDayClick: () -> Unit){
+fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: CalendarViewModel){
     Row(modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
-        IconButton(onClick = { onPreviousDayClick() }) {
+        IconButton(onClick = {
+            viewModel.setDate(LocalDate.parse(viewModel.selectedDate).minusDays(1).toString())
+        }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
                 contentDescription = stringResource(R.string.left_arrow)
@@ -227,7 +217,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String, onPreviousDayClick
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        IconButton(onClick = { onNextDayClick() }) {
+        IconButton(onClick = { viewModel.setDate(LocalDate.parse(viewModel.selectedDate).plusDays(1).toString())}) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = stringResource(R.string.right_arrow)

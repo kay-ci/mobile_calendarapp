@@ -34,27 +34,6 @@ import java.time.LocalDateTime
 
 
 
-//Clean data to avoid malicious inputs
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Field(editable: Boolean, label: String?, startingValue: String?){
-    var text by rememberSaveable { mutableStateOf(startingValue) }
-    Column(){
-        Text(
-            text = "$label: ",
-            fontSize = 40.sp
-        )
-        TextField(
-            value = text!!,
-            onValueChange = { text = it},
-            maxLines = 1,
-            readOnly = !editable,
-            modifier = Modifier.fillMaxWidth(),
-            colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
-            else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
-        )
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,7 +43,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
     var description by rememberSaveable { mutableStateOf(event.description) }
     var location by rememberSaveable { mutableStateOf(event.location) }
     var day by rememberSaveable { mutableStateOf(event.date.dayOfMonth.toString()) }
-    var month by rememberSaveable { mutableStateOf(event.date.month.toString()) }
+    var month by rememberSaveable { mutableStateOf(event.date.monthValue.toString()) }
     var year by rememberSaveable { mutableStateOf(event.date.year.toString()) }
     var startHour by rememberSaveable { mutableStateOf(event.startTime.hour.toString()) }
     var startMinute by rememberSaveable { mutableStateOf(event.startTime.minute.toString()) }
@@ -92,7 +71,27 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     Text("Edit")
                 }
                 Button(onClick = {
-                    navController.popBackStack()
+                    var eventFromVM: Event? = null
+                    viewModel.events.forEach{vmEvent ->
+                        if(vmEvent.startTime == event.startTime){
+                            eventFromVM = vmEvent
+                        }
+                    }
+                    try{
+                        val year1 = year
+                        val month1 = month
+                        val day1 = day
+                        val endTime = LocalDateTime.of(year.toInt(), month.toInt(), day.toInt(), endHour.toInt(), endMinute.toInt())
+                        val newEvent = Event(title, description = description, location = location, date = event.date, startTime = event.startTime, endTime = endTime)
+                        eventFromVM?.title = newEvent.title
+                        eventFromVM?.description = newEvent.description
+                        eventFromVM?.location = newEvent.location
+                        eventFromVM?.endTime = newEvent.endTime
+                        navController.popBackStack()
+                    }
+                    catch(e: Exception){
+                        //show error
+                    }
                 }){
                     Text("Save")
                 }
@@ -119,7 +118,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     onValueChange = { title = it},
                     maxLines = 1,
                     readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
             Column(){
@@ -132,7 +134,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     onValueChange = { description = it},
                     maxLines = 1,
                     readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
             Column(){
@@ -145,7 +150,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     onValueChange = { location = it},
                     maxLines = 1,
                     readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
             Column(){
@@ -157,8 +165,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = day!!,
                     onValueChange = { day = it},
                     maxLines = 1,
-                    readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
@@ -170,8 +179,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = month!!,
                     onValueChange = { month = it},
                     maxLines = 1,
-                    readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
@@ -183,8 +193,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = year!!,
                     onValueChange = { year = it},
                     maxLines = 1,
-                    readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
         }
@@ -198,8 +209,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = startHour!!,
                     onValueChange = { startHour = it},
                     maxLines = 1,
-                    readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
@@ -211,8 +223,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = startMinute!!,
                     onValueChange = { startMinute = it},
                     maxLines = 1,
-                    readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
@@ -225,7 +238,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     onValueChange = { endHour = it},
                     maxLines = 1,
                     readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
             Column(){
@@ -238,7 +254,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     onValueChange = { endMinute = it},
                     maxLines = 1,
                     readOnly = !editable,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
         }
