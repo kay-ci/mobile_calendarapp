@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
 
             composable(Routes.NewMonthEventView.route + "/{month}"){
                 backStackEntry -> val month = backStackEntry.arguments?.getString("month")
-                NewMonthEventScreen(navController, month)
+                NewMonthEventScreen(navController, viewModel)
             }
 
             composable(Routes.NewDayEventView.route + "/{date}"){

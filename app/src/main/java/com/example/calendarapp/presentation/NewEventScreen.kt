@@ -31,8 +31,22 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewMonthEventScreen(navController: NavHostController, month: String?) {
+fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarViewModel) {
+    var startMinute by rememberSaveable { mutableStateOf("") }
+    var startHour by rememberSaveable { mutableStateOf("") }
+    var endMinute by rememberSaveable { mutableStateOf("") }
+    var endHour by rememberSaveable { mutableStateOf("") }
+    var location by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var title by rememberSaveable { mutableStateOf("") }
+
+    var day by rememberSaveable {mutableStateOf("")}
+
+    val year = viewModel.currentYear.value
+    val month = viewModel.currentMonth.value
+
     LazyColumn(){
         item(){
             Row(
@@ -54,25 +68,129 @@ fun NewMonthEventScreen(navController: NavHostController, month: String?) {
                     textAlign = TextAlign.Center,
                     color = Color.White)
                 Button(onClick = {
-                    navController.popBackStack()
+                    try{
+                        val start = LocalDateTime.of(2023, 11, 20, startHour.toInt(), startMinute.toInt())
+                        val end = LocalDateTime.of(2023, 11, 20, endHour.toInt(), endHour.toInt())
+                        if(end <= start){
+                            throw Exception()
+                        }
+                        val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
+                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location)
+                        viewModel.addEvent(newEvent)
+                        navController.popBackStack()
+                    }
+                    catch(e: Exception){
+                        //show error message
+                    }
                 }){
                     Text("save")
                 }
             }
-        }//use TimeDialog
-        item(){
-            Field(true, "Title", "")
         }
         item(){
-            Field(true, "description", "")
+            Text(month + " "+ year)
         }
         item(){
-            Text("Start Time:", fontSize = 40.sp)
-            Field(true, "Day", "")
-            Field(false, "Month", month)
-            Field(true, "Year", "")
-            Field(true, "Hour", "")
-            Field(true, "Minute", "")
+            Column(){
+                Text(
+                    text = "Title: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = title,
+                    onValueChange = { title = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "description: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = description,
+                    onValueChange = { description = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "location: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = location,
+                    onValueChange = { location = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "day: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = day,
+                    onValueChange = { day = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+        item(){
+            Column(){
+                Text(
+                    text = "start hour: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = startHour,
+                    onValueChange = { startHour = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "start minute: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = startMinute,
+                    onValueChange = { startMinute = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
+        item(){
+            Column(){
+                Text(
+                    text = "end hour: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = endHour,
+                    onValueChange = { endHour = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "end minute: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = endMinute,
+                    onValueChange = { endMinute = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }
@@ -116,7 +234,7 @@ fun NewDayEventScreen(navController: NavHostController, date: LocalDate, viewMod
                 Button(onClick = {
                     try{
                         val start = LocalDateTime.of(2023, 11, 20, startHour.toInt(), startMinute.toInt())
-                        val end = LocalDateTime.of(2023, 11, 20, endHour.toInt(), endHour.toInt())
+                        val end = LocalDateTime.of(2023, 11, 20, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
                             throw Exception()
                         }
