@@ -17,6 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.calendarapp.R
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun NewMonthEventScreen(navController: NavHostController, month: String?) {
@@ -66,7 +68,8 @@ fun NewMonthEventScreen(navController: NavHostController, month: String?) {
 
 
 @Composable
-fun NewDayEventScreen(navController: NavHostController, month: Int, day: Int = -1) {
+fun NewDayEventScreen(navController: NavHostController, date: LocalDate) {
+    val currentDate = date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     LazyColumn(){
         item(){
             Row(
@@ -102,8 +105,8 @@ fun NewDayEventScreen(navController: NavHostController, month: Int, day: Int = -
         }
         item(){
             Text("Start Time:", fontSize = 40.sp)
-            Field(false, "Day", month.toString());
-            Field(false, "Month", month.toString())
+            Field(false, "Day", currentDate);
+            //Field(false, "Month", month)
             Field(true, "Year", "")
             Field(true, "Hour", "")
             Field(true, "Minute", "")
