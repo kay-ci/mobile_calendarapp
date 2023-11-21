@@ -33,10 +33,8 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun HomeView(){
         val viewModel: CalendarViewModel = viewModel()
-
         val navController = rememberNavController()
         NavigationComponent(navController, viewModel)
-
     }
 }
 
