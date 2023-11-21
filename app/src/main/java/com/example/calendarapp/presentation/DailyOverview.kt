@@ -114,9 +114,8 @@ fun DailyPage(
 fun NavigationBar(navController: NavHostController) {
     Box(modifier = Modifier
         .fillMaxWidth()
-        .size(30.dp)
-        .background(MaterialTheme.colorScheme.primary)
-        .padding(5.dp),
+        .size(50.dp)
+        .background(MaterialTheme.colorScheme.primary),
     ){
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.testTag("BACK_BUTTON")) {
             Icon(

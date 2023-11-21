@@ -167,9 +167,9 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
         Card(
             modifier = Modifier
                 .padding(vertical = 2.dp, horizontal = 4.dp),
-            colors = CardDefaults.cardColors(
+            colors = (CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primary
-            ),
+            )),
             onClick = {
                 if(currentYear !=0 && currentMonth != ""){
                     // Parse the selected day to LocalDate
