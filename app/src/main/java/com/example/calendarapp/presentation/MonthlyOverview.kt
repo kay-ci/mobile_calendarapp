@@ -50,7 +50,7 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
 
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
-        WeekDaysHeader(list = list, navController)
+        WeekDaysHeader(list = list, navController, viewModel)
         MonthContent(data = viewModel, list = viewModel.daysInMonth.value, navController)
         Box(
             modifier = Modifier
@@ -108,7 +108,7 @@ fun Header(data: CalendarViewModel){
 
 // Display the 7 weeks days
 @Composable
-fun WeekDaysHeader(list : List<String>, navController: NavHostController){
+fun WeekDaysHeader(list : List<String>, navController: NavHostController, viewModel: CalendarViewModel){
     LazyVerticalGrid(
         columns = GridCells.Fixed(7),
         // content padding
@@ -120,7 +120,7 @@ fun WeekDaysHeader(list : List<String>, navController: NavHostController){
         content = {
 
             items(items = list) {cellContent ->
-                ContentItem(content = cellContent, navController = navController, 0, "")
+                ContentItem(content = cellContent, navController = navController, 0, "", viewModel)
             }
         }
     )
@@ -152,7 +152,7 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
             items(items = offsetList) {cellContent ->
                 ContentItem(content = cellContent, navController,
                     currentYear = data.currentYear.value,
-                    currentMonth = data.currentMonth.value)
+                    currentMonth = data.currentMonth.value, data)
             }
         }
     )
@@ -162,7 +162,7 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
-                currentMonth: String){
+                currentMonth: String, viewModel: CalendarViewModel){
     if(content.isNotBlank()) {
         Card(
             modifier = Modifier
@@ -179,8 +179,10 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                         content.toInt()
                     )
 
+                    viewModel.setDate(selectedDate.toString())
+
                     // Pass the selected date to DailyView
-                    navController.navigate("dailyView/$selectedDate") {
+                    navController.navigate(Routes.DailyView.route) {
                         launchSingleTop = true
                         popUpTo(Routes.MonthView.route) { saveState = true }
                     }

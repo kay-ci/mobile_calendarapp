@@ -10,10 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.calendarapp.domain.Event
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import java.time.LocalDate
@@ -39,11 +42,6 @@ class MainActivity : ComponentActivity() {
         val viewModel: CalendarViewModel = viewModel()
 
         val navController = rememberNavController()
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val arguments = navBackStackEntry?.arguments
-        val selectedDate: LocalDate? = arguments?.getString("selectedDate")?.let {
-            LocalDate.parse(it)
-        }
         NavHost(navController = navController, startDestination = Routes.MonthView.route) {
 
             // Navigation graph destinations
@@ -52,21 +50,27 @@ class MainActivity : ComponentActivity() {
             }
 
             composable(Routes.DailyView.route){
-                if (selectedDate != null) {
-                    ViewPage(navController, selectedDate, viewModel)
-                }
+                ViewPage(navController, viewModel)
             }
-            composable(Routes.EditEventView.route){
-                EventView(navController)
+            composable(Routes.EditEventView.route+"/{startTime}"){
+                backStackEntry -> val startTime = backStackEntry.arguments?.getString("startTime")
+                var theEvent: Event? = null
+                viewModel.events.forEach {
+                    event ->
+                    if(event.startTime.toString() == startTime){
+                        theEvent = event
+                    }
+                }
+                theEvent?.let { EventScreen(it, navController, viewModel) }
             }
 
             composable(Routes.NewMonthEventView.route + "/{month}"){
                 backStackEntry -> val month = backStackEntry.arguments?.getString("month")
-                NewMonthEventScreen(navController, month)
+                NewMonthEventScreen(navController, viewModel)
             }
 
             composable(Routes.NewDayEventView.route){
-                NewDayEventScreen(navController, 0, 1)
+                NewDayEventScreen(navController, viewModel)
             }
         }
 

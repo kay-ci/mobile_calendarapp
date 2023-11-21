@@ -28,47 +28,27 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.R
+import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-//
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun EventView(navController: NavHostController) {
-    val testEvent = Event("Skiing",
-        LocalDate.parse("2023-11-11"),
-        LocalDateTime.parse("2023-11-11T04:00:00"),
-        LocalDateTime.parse("2023-11-11T06:30:00"),
-        "Going to ski","Mont Bruno")
-    EventScreen(event = testEvent, navController)
-}
 
-//Clean data to avoid malicious inputs
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Field(editable: Boolean, label: String?, startingValue: String?){
-    var text by rememberSaveable { mutableStateOf(startingValue) }
-    Column(){
-        Text(
-            text = "$label: ",
-            fontSize = 40.sp
-        )
-        TextField(
-            value = text!!,
-            onValueChange = { text = it},
-            maxLines = 1,
-            readOnly = !editable,
-            modifier = Modifier.fillMaxWidth(),
-            colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
-            else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
-        )
-    }
-}
-
-@Composable
-fun EventScreen(event: Event, navController: NavHostController){
+fun EventScreen(event: Event, navController: NavHostController, viewModel: CalendarViewModel){
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
+    var title by rememberSaveable { mutableStateOf(event.title) }
+    var description by rememberSaveable { mutableStateOf(event.description) }
+    var location by rememberSaveable { mutableStateOf(event.location) }
+    var day by rememberSaveable { mutableStateOf(event.date.dayOfMonth.toString()) }
+    var month by rememberSaveable { mutableStateOf(event.date.monthValue.toString()) }
+    var year by rememberSaveable { mutableStateOf(event.date.year.toString()) }
+    var startHour by rememberSaveable { mutableStateOf(event.startTime.hour.toString()) }
+    var startMinute by rememberSaveable { mutableStateOf(event.startTime.minute.toString()) }
+    var endHour by rememberSaveable { mutableStateOf(event.endTime.hour.toString()) }
+    var endMinute by rememberSaveable { mutableStateOf(event.endTime.minute.toString()) }
     LazyColumn{
         item{
             NavigationBar(navController = navController)
@@ -91,12 +71,36 @@ fun EventScreen(event: Event, navController: NavHostController){
                     Text("Edit")
                 }
                 Button(onClick = {
-                    /* TODO validation on the fields and then go to previous page*/
-                    navController.popBackStack()
+                    var eventFromVM: Event? = null
+                    viewModel.events.forEach{vmEvent ->
+                        if(vmEvent.startTime == event.startTime){
+                            eventFromVM = vmEvent
+                        }
+                    }
+                    try{
+                        val year1 = year
+                        val month1 = month
+                        val day1 = day
+                        val endTime = LocalDateTime.of(year.toInt(), month.toInt(), day.toInt(), endHour.toInt(), endMinute.toInt())
+                        val newEvent = Event(title, description = description, location = location, date = event.date, startTime = event.startTime, endTime = endTime)
+                        eventFromVM?.title = newEvent.title
+                        eventFromVM?.description = newEvent.description
+                        eventFromVM?.location = newEvent.location
+                        eventFromVM?.endTime = newEvent.endTime
+                        navController.popBackStack()
+                    }
+                    catch(e: Exception){
+                        //show error
+                    }
                 }){
                     Text("Save")
                 }
                 Button(onClick = {
+                    viewModel.events.forEachIndexed{index, loopEvent ->
+                        if(loopEvent.startTime == event.startTime){
+                            viewModel.removeEvent(index)
+                        }
+                    }
                     navController.popBackStack()
                 }){
                     Text("Delete")
@@ -104,32 +108,158 @@ fun EventScreen(event: Event, navController: NavHostController){
             }
         } }
         item{
-            Field(editable, "Title", event.title)
-            Field(editable, "Description", event.description)
-            Field(editable, "Location", event.location)
+            Column(){
+                Text(
+                    text = "Title: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = title!!,
+                    onValueChange = { title = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
+            Column(){
+                Text(
+                    text = "Description: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = description!!,
+                    onValueChange = { description = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
+            Column(){
+                Text(
+                    text = "Location: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = location!!,
+                    onValueChange = { location = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
+            Column(){
+                Text(
+                    text = "Day: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = day!!,
+                    onValueChange = { day = it},
+                    maxLines = 1,
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
+            Column(){
+                Text(
+                    text = "Month: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = month!!,
+                    onValueChange = { month = it},
+                    maxLines = 1,
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
+            Column(){
+                Text(
+                    text = "Year: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = year!!,
+                    onValueChange = { year = it},
+                    maxLines = 1,
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
         }
         item{
-            Text("Start Time:", fontSize = 40.sp)
-            Field(editable, "Day", event.startTime.dayOfMonth.toString())
-            Field(editable, "Month", event.startTime.month.toString())
-            Field(editable, "Year", event.startTime.year.toString())
-            Field(editable, "Hour", event.startTime.hour.toString())
-            Field(editable, "Minute", event.startTime.minute.toString())
-        }
-        item{
-            Text("End Time:", fontSize = 40.sp)
-            Field(editable, "Day", event.endTime.dayOfMonth.toString())
-            Field(editable, "Month", event.endTime.month.toString())
-            Field(editable, "Year", event.endTime.year.toString())
-            Field(editable, "Hour", event.endTime.hour.toString())
-            Field(editable, "Minute", event.endTime.minute.toString())
+            Column(){
+                Text(
+                    text = "Start Hour: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = startHour!!,
+                    onValueChange = { startHour = it},
+                    maxLines = 1,
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
+            Column(){
+                Text(
+                    text = "Start Minute: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = startMinute!!,
+                    onValueChange = { startMinute = it},
+                    maxLines = 1,
+                    readOnly = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
+            Column(){
+                Text(
+                    text = "End Hour: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = endHour!!,
+                    onValueChange = { endHour = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
+            Column(){
+                Text(
+                    text = "End Minute: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = endMinute!!,
+                    onValueChange = { endMinute = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
         }
     }
-}
-
-
-// Create event view maybe put in another file
-@Composable
-fun CreateEvent(navController: NavHostController){
-    NavigationBar(navController = navController)
 }
