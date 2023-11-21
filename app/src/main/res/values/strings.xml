@@ -3,4 +3,5 @@
     <string name="add_button">Add event</string>
     <string name="right_arrow">Right arrow</string>
     <string name="left_arrow">Left arrow</string>
+    <string name="back_button">BACK_BUTTON</string>
 </resources>

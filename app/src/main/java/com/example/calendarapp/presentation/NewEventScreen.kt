@@ -49,20 +49,14 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
 
     LazyColumn(){
         item(){
+            NavigationBar(navController = navController)
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.background(Color.Gray)
+                modifier = Modifier
+                    .background(Color.Gray)
                     .fillMaxWidth()
             ){
-                Button(onClick = {
-                    navController.popBackStack()
-                }){
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
-                        contentDescription = "back arrow"
-                    )
-                }
                 Text("New Event",
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
@@ -213,20 +207,14 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
     val currentDate = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     LazyColumn(){
         item(){
+            NavigationBar(navController = navController)
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.background(Color.Gray)
+                modifier = Modifier
+                    .background(Color.Gray)
                     .fillMaxWidth()
             ){
-                Button(onClick = {
-                    navController.popBackStack()
-                }){
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
-                        contentDescription = "back arrow"
-                    )
-                }
                 Text("New Event",
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
