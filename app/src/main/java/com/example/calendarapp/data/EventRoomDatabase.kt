@@ -8,5 +8,5 @@ import com.example.calendarapp.domain.Event
 
 @Database (entities = [(Event::class)], version = 1)
 abstract class EventRoomDatabase : RoomDatabase(){
-    
+
 }
