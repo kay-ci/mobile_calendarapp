@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModel
 import com.example.calendarapp.data.EventRepository
 import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
-
 
 class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
