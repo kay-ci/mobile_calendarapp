@@ -142,11 +142,11 @@ class CalendarViewModel (application: Application) : ViewModel() {
 
     private val _events = mutableStateListOf<Event>()
     val events: List<Event> = _events
-    fun getEventsForDate(date: LocalDate): List<Event> {
-        return _events.filter { it.date == date }
+    fun getEventsForDate(date: LocalDate){
+        repository.findEvent(date)
     }
     fun addEvent(event: Event){
-        _events.add(event)
+        repository.insertEvent(event)
     }
 
     fun removeEvent(index: Int){

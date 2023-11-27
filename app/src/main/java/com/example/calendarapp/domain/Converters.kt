@@ -17,10 +17,10 @@ class Converters {
     fun dateToTimestampForDay(date: LocalDateTime?): Long? {
         return date?.atZone(ZoneOffset.UTC)?.toInstant()?.toEpochMilli()
     }
-    @RequiresApi(34)
+
     @TypeConverter
     fun fromTimestampForDate(value: Long?): LocalDate? {
-        return value?.let { LocalDate.ofInstant(Instant.ofEpochMilli(value), ZoneOffset.UTC) }
+        return value?.let { Instant.ofEpochMilli(value).atZone(ZoneOffset.UTC).toLocalDate() }
     }
 
     @TypeConverter

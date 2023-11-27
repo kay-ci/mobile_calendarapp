@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,15 +22,21 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
         composable(Routes.DailyView.route){
             ViewPage(navController, viewModel)
         }
-        composable(Routes.EditEventView.route+"/{startTime}"){
-                backStackEntry -> val startTime = backStackEntry.arguments?.getString("startTime")
+        composable(Routes.EditEventView.route + "/{startTime}") { backStackEntry ->
+            val startTime = backStackEntry.arguments?.getString("startTime")
+
+            // Observe the LiveData using observeAsState
+            val allEvents by viewModel.allEvents.observeAsState()
+
             var theEvent: Event? = null
-            viewModel.events.forEach {
-                    event ->
-                if(event.startTime.toString() == startTime){
+
+            // Check if allEvents is not null before iterating
+            allEvents?.forEach { event ->
+                if (event.startTime.toString() == startTime) {
                     theEvent = event
                 }
             }
+
             theEvent?.let { EventScreen(it, navController, viewModel) }
         }
 
