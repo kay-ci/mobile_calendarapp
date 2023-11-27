@@ -1,5 +1,6 @@
 package com.example.calendarapp.presentation.viewmodel
 
+import android.app.Application
 import android.icu.util.Calendar
 import android.icu.util.ULocale
 import androidx.compose.runtime.MutableState
@@ -7,12 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.calendarapp.data.EventRepository
+import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
 import java.time.LocalDate
 
 
-class CalendarViewModel () : ViewModel() {
+class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
     fun setDate(newDate: String){
         selectedDate = newDate
@@ -34,11 +39,22 @@ class CalendarViewModel () : ViewModel() {
 
     private val _firstWeekDay = mutableStateOf<Int>(Calendar.SUNDAY)
     val firstWeekDay : MutableState<Int> = _firstWeekDay
+    val allEvents : LiveData<List<Event>>
+    private val repository : EventRepository
+    val searchResults: MutableLiveData<List<Event>>
 
     init {
         updateMonthYear()
         updateDaysOfMonth()
         updateFirstWeekDay()
+        val eventDb = EventRoomDatabase.getInstance(application)
+        val eventDao = eventDb.eventDao()
+        repository = EventRepository(eventDao)
+
+        allEvents = repository.allEvents
+        searchResults = repository.searchResults
+
+
     }
 
     fun getMonthNumber(month: String): Int {

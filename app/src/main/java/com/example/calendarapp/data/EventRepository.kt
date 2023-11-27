@@ -7,7 +7,8 @@ import com.example.calendarapp.domain.Event
 import java.time.LocalDate
 
 class EventRepository(private val eventDao: EventDao) {
-    private val searchResults = MutableLiveData<List<Event>>()
+    val searchResults = MutableLiveData<List<Event>>()
+    val allEvents : LiveData<List<Event>> = eventDao.getAllEvents()
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
     fun insertEvent(newEvent: Event){
@@ -30,6 +31,7 @@ class EventRepository(private val eventDao: EventDao) {
         coroutineScope.async(Dispatchers.IO) {
             return@async eventDao.findEvent(date)
         }
+
 
 
 
