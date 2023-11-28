@@ -17,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -38,7 +40,6 @@ import java.time.LocalDateTime
 @Composable
 fun EventScreen(event: Event, navController: NavHostController, viewModel: CalendarViewModel){
     val allEvents by viewModel.allEvents.observeAsState()
-
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     var title by rememberSaveable { mutableStateOf(event.title) }
     var description by rememberSaveable { mutableStateOf(event.description) }
@@ -50,6 +51,24 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
     var startMinute by rememberSaveable { mutableStateOf(event.startTime.minute.toString()) }
     var endHour by rememberSaveable { mutableStateOf(event.endTime.hour.toString()) }
     var endMinute by rememberSaveable { mutableStateOf(event.endTime.minute.toString()) }
+
+    //Allow the changes in the event view to be seen directly when you edit an event
+    DisposableEffect(event) {
+        // Set the state variables based on the event parameter
+        title = event.title
+        description = event.description
+        location = event.location
+        day = event.date.dayOfMonth.toString()
+        month = event.date.monthValue.toString()
+        year = event.date.year.toString()
+        startHour = event.startTime.hour.toString()
+        startMinute = event.startTime.minute.toString()
+        endHour = event.endTime.hour.toString()
+        endMinute = event.endTime.minute.toString()
+        onDispose {
+            // Cleanup code if needed
+        }
+    }
     LazyColumn{
         item{
             NavigationBar(navController = navController)

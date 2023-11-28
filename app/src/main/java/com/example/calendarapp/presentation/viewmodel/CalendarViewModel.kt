@@ -140,8 +140,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
         firstWeekDay.value = calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-    private val _events = mutableStateListOf<Event>()
-    val events: List<Event> = _events
     fun getEventsForDate(date: LocalDate){
         repository.findEvent(date)
     }
