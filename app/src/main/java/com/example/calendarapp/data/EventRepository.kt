@@ -16,9 +16,9 @@ class EventRepository(private val eventDao: EventDao) {
             eventDao.insertEvent(newEvent)
         }
     }
-    fun deleteEvent(title: String) {
+    fun deleteEvent(eventId: Int) {
         coroutineScope.launch(Dispatchers.IO) {
-            eventDao.deleteEvent(title)
+            eventDao.deleteEvent(eventId)
         }
     }
 

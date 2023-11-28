@@ -150,7 +150,7 @@ class CalendarViewModel (application: Application) : ViewModel() {
     }
 
     fun removeEvent(index: Int){
-        _events.removeAt(index)
+        repository.deleteEvent(index)
     }
 
     fun containsEvent(theEvent: Event): Boolean{

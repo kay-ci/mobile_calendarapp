@@ -18,6 +18,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -38,6 +39,7 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreen(event: Event, navController: NavHostController, viewModel: CalendarViewModel){
+    val allEvents by viewModel.allEvents.observeAsState()
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     var title by rememberSaveable { mutableStateOf(event.title) }
     var description by rememberSaveable { mutableStateOf(event.description) }
@@ -96,9 +98,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     Text("Save")
                 }
                 Button(onClick = {
-                    viewModel.events.forEachIndexed{index, loopEvent ->
+                    allEvents?.forEach {loopEvent ->
                         if(loopEvent.startTime == event.startTime){
-                            viewModel.removeEvent(index)
+                            loopEvent.id?.let { viewModel.removeEvent(it) }
                         }
                     }
                     navController.popBackStack()

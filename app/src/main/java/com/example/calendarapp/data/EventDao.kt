@@ -16,8 +16,8 @@ interface EventDao {
     @Query("SELECT * FROM events WHERE eventDate = :date")
     fun findEvent(date: LocalDate) : List<Event>
 
-    @Query("DELETE FROM events WHERE eventTitle= :title")
-    fun deleteEvent(title : String)
+    @Query("DELETE FROM events WHERE eventId = :eventId")
+    fun deleteEvent(eventId: Int)
 
     @Query("SELECT * FROM events")
     fun getAllEvents(): LiveData<List<Event>>
