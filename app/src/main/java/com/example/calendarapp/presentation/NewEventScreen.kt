@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,11 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.calendarapp.R
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
@@ -63,7 +59,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     color = Color.White)
                 Button(onClick = {
                     try{
-                        val date = LocalDate.of(year.toInt(), viewModel.getMonthNumber(month), day.toInt())
+                        val date = LocalDate.of(year, viewModel.getMonthNumber(month), day.toInt())
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
                         val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endHour.toInt())
                         if(end <= start){

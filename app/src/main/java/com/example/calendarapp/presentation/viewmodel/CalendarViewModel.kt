@@ -16,6 +16,7 @@ import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
@@ -165,6 +166,4 @@ class CalendarViewModel (application: Application) : ViewModel() {
         }
         return output
     }
-
-
 }
