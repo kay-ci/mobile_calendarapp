@@ -153,15 +153,20 @@ class CalendarViewModel (application: Application) : ViewModel() {
         repository.deleteEvent(index)
     }
 
-    fun containsEvent(theEvent: Event): Boolean{
+    fun updateEvent(updatedEvent: Event) {
+        repository.updateEvent(updatedEvent)
+    }
+
+
+    fun containsEvent(theEvent: Event): Boolean {
         var output: Boolean = false
-        _events.forEach{event ->
-            if(event.startTime == theEvent.startTime){
+        allEvents.value?.forEach { event ->
+            if (event.startTime == theEvent.startTime) {
                 output = true
             }
         }
-
         return output
     }
+
 
 }

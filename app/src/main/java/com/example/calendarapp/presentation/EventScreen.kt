@@ -34,12 +34,11 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventScreen(event: Event, navController: NavHostController, viewModel: CalendarViewModel){
     val allEvents by viewModel.allEvents.observeAsState()
+
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     var title by rememberSaveable { mutableStateOf(event.title) }
     var description by rememberSaveable { mutableStateOf(event.description) }
@@ -69,26 +68,29 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     )
                 }
                 Button(onClick = {editable = !editable},
-                    colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors()){
+                    colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors())
+                {
                     Text("Edit")
                 }
                 Button(onClick = {
-                    var eventFromVM: Event? = null
-                    viewModel.events.forEach{vmEvent ->
-                        if(vmEvent.startTime == event.startTime){
-                            eventFromVM = vmEvent
-                        }
-                    }
-                    try{
-                        val year1 = year
-                        val month1 = month
-                        val day1 = day
-                        val endTime = LocalDateTime.of(year.toInt(), month.toInt(), day.toInt(), endHour.toInt(), endMinute.toInt())
-                        val newEvent = Event(title, description = description, location = location, date = event.date, startTime = event.startTime, endTime = endTime)
-                        eventFromVM?.title = newEvent.title
-                        eventFromVM?.description = newEvent.description
-                        eventFromVM?.location = newEvent.location
-                        eventFromVM?.endTime = newEvent.endTime
+                    try {
+                        val endTime = LocalDateTime.of(
+                            year.toInt(),
+                            month.toInt(),
+                            day.toInt(),
+                            endHour.toInt(),
+                            endMinute.toInt()
+                        )
+                        val newEvent = Event(
+                            event.id,
+                            title,
+                            event.date,
+                            event.startTime,
+                            endTime,
+                            description,
+                            location
+                        )
+                        viewModel.updateEvent(newEvent)
                         navController.popBackStack()
                     }
                     catch(e: Exception){

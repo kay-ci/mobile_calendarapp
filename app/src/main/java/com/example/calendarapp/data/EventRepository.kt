@@ -21,6 +21,11 @@ class EventRepository(private val eventDao: EventDao) {
             eventDao.deleteEvent(eventId)
         }
     }
+    fun updateEvent(updatedEvent: Event) {
+        coroutineScope.launch(Dispatchers.IO) {
+            eventDao.updateEvent(updatedEvent)
+        }
+    }
 
     fun findEvent(date : LocalDate){
         coroutineScope.launch(Dispatchers.Main) {
