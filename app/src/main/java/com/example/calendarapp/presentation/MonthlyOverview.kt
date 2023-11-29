@@ -164,12 +164,19 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
                 currentMonth: String, viewModel: CalendarViewModel){
     if(content.isNotBlank()) {
+        var theColor = MaterialTheme.colorScheme.inversePrimary
+        var today = LocalDate.now()
+
+        //days with events have to be differently coloured
+
+        //current day has to be differently coloured
+        if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
+            theColor = MaterialTheme.colorScheme.tertiary
+        }
         Card(
             modifier = Modifier
                 .padding(vertical = 2.dp, horizontal = 4.dp),
-            colors = (CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )),
+            colors = (CardDefaults.cardColors(containerColor = theColor)),
             onClick = {
                 if(currentYear !=0 && currentMonth != ""){
                     // Parse the selected day to LocalDate
