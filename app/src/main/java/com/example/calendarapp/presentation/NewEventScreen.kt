@@ -37,6 +37,8 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
     var location by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var title by rememberSaveable { mutableStateOf("") }
+    var teacher by rememberSaveable {mutableStateOf("")}
+    var program by rememberSaveable {mutableStateOf("")}
 
     var day by rememberSaveable {mutableStateOf("")}
 
@@ -65,7 +67,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                         if(end <= start){
                             throw Exception("chronologically impossible")
                         }
-                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location)
+                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher, program)
                         if(viewModel.containsEvent(newEvent)){
                             throw Exception("time is already used by another event")
                         }
@@ -128,6 +130,30 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                 TextField(
                     value = day,
                     onValueChange = { day = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "Teacher: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = teacher,
+                    onValueChange = { teacher = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "Program: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = program,
+                    onValueChange = { program = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -199,6 +225,8 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
     var location by rememberSaveable { mutableStateOf("") }
     var description by rememberSaveable { mutableStateOf("") }
     var title by rememberSaveable { mutableStateOf("") }
+    var teacher by rememberSaveable {mutableStateOf("")}
+    var program by rememberSaveable {mutableStateOf("")}
 
     val currentDate = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     LazyColumn(){
@@ -223,7 +251,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                         if(end <= start){
                             throw Exception()
                         }
-                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location)
+                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher = teacher, program = program)
                         if(viewModel.containsEvent(newEvent)){
                             throw Exception()
                         }
@@ -278,6 +306,32 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+
+            Column(){
+                Text(
+                    text = "teacher: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = teacher,
+                    onValueChange = { teacher = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Column(){
+                Text(
+                    text = "program: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = program,
+                    onValueChange = { program = it},
+                    maxLines = 1,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
         }
         item(){
             Column(){

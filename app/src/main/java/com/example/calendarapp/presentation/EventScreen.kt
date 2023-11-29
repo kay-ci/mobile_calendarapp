@@ -51,6 +51,8 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
     var startMinute by rememberSaveable { mutableStateOf(event.startTime.minute.toString()) }
     var endHour by rememberSaveable { mutableStateOf(event.endTime.hour.toString()) }
     var endMinute by rememberSaveable { mutableStateOf(event.endTime.minute.toString()) }
+    var teacher by rememberSaveable {mutableStateOf(event.teacher)}
+    var program by rememberSaveable {mutableStateOf(event.program)}
 
     //Allow the changes in the event view to be seen directly when you edit an event
     DisposableEffect(event) {
@@ -65,6 +67,8 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
         startMinute = event.startTime.minute.toString()
         endHour = event.endTime.hour.toString()
         endMinute = event.endTime.minute.toString()
+        teacher = event.teacher
+        program = event.program
         onDispose {
             // Cleanup code if needed
         }
@@ -107,7 +111,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                             event.startTime,
                             endTime,
                             description,
-                            location
+                            location,
+                            teacher,
+                            program
                         )
                         viewModel.updateEvent(newEvent)
                         navController.popBackStack()
@@ -219,6 +225,38 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     readOnly = true,
                     modifier = Modifier.fillMaxWidth(),
                     colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                )
+            }
+            Column(){
+                Text(
+                    text = "Teacher: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = teacher!!,
+                    onValueChange = { teacher = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
+                )
+            }
+            Column(){
+                Text(
+                    text = "Program: ",
+                    fontSize = 40.sp
+                )
+                TextField(
+                    value = program!!,
+                    onValueChange = { program = it},
+                    maxLines = 1,
+                    readOnly = !editable,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+
                 )
             }
         }

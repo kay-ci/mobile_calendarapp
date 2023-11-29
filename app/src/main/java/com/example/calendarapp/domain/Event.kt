@@ -14,7 +14,9 @@ data class Event(
     @ColumnInfo(name ="eventStart") @NonNull val startTime: LocalDateTime,
     @ColumnInfo(name ="eventEnd") @NonNull var endTime: LocalDateTime,
     @ColumnInfo(name ="eventDesc")var description: String?,
-    @ColumnInfo(name ="eventLoc")var location : String?
+    @ColumnInfo(name ="eventLoc")var location : String?,
+    @ColumnInfo(name ="eventTeacher")var teacher: String?,
+    @ColumnInfo(name ="eventProgram")var program: String?
 
 ){
     constructor(
@@ -23,6 +25,8 @@ data class Event(
         startTime: LocalDateTime,
         endTime: LocalDateTime,
         description: String?,
-        location: String?
-    ) : this(null, title, date, startTime, endTime, description, location)
+        location: String?,
+        teacher: String?,
+        program: String?
+    ) : this(null, title, date, startTime, endTime, description, location, teacher, program)
 }
