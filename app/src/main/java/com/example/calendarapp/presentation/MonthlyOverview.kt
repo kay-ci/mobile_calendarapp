@@ -168,6 +168,7 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
         var today = LocalDate.now()
 
         //days with events have to be differently coloured
+        viewModel.allEvents
 
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
