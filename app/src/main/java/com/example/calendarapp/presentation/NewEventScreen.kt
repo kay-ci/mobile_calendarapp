@@ -61,7 +61,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     try{
                         val date = LocalDate.of(year, viewModel.getMonthNumber(month), day.toInt())
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
-                        val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endHour.toInt())
+                        val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
                             throw Exception("chronologically impossible")
                         }
