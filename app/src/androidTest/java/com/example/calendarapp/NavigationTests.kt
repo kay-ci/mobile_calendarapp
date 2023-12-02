@@ -1,6 +1,7 @@
 package com.example.calendarapp
 
 import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -10,7 +11,9 @@ import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.calendarapp.presentation.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -35,7 +38,8 @@ class NavigationTests {
 
     @get:Rule
     var hiltRule = HiltAndroidRule(this)
-    private lateinit var navController: NavHostController
+
+    private lateinit var navController: TestNavHostController
     private lateinit var testViewModel: CalendarViewModel
 
     @Before
@@ -43,7 +47,9 @@ class NavigationTests {
         hiltRule.inject()
 
         composeTestRule.activity.setContent {
-            navController = rememberNavController()
+            navController = TestNavHostController(LocalContext.current).apply{
+                navigatorProvider.addNavigator(ComposeNavigator())
+            }
             testViewModel = hiltViewModel()
 
             NavigationComponent(navController = navController, viewModel = testViewModel)
@@ -57,24 +63,23 @@ class NavigationTests {
 
             waitForIdle()
             val currentRoute = navController.currentDestination?.route
-            Assert.assertEquals(currentRoute, Routes.DailyView.route + "")
+            assertEquals(currentRoute, Routes.DailyView.route + "")
         }
     }
+    @Test
+    fun testDailyToMonthView(){
+        composeTestRule.apply {
+            // Navigating to DailyView
+            onNodeWithText("1").performClick()
+            waitForIdle()
 
-//    @Test
-//    fun testDailyToMonthView(){
-//        composeTestRuleOthers.setContent {
-//            CalendarAppTheme{
-//                ViewPage(navController = navController, viewModel = testViewModel)
-//            }
-//        }
-//        composeTestRuleOthers.onNodeWithTag("back_button").performClick()
-//        composeTestRuleOthers.waitForIdle()
-//
-//            val currentRoute = navController.currentDestination?.route
-//            Assert.assertEquals(currentRoute, Routes.MonthView.route)
-//
-//    }
+            // Going back
+            onNodeWithTag("BACK_BUTTON").performClick()
+
+            val currentRoute = navController.currentDestination?.route
+            assertEquals(currentRoute, Routes.MonthView.route)
+        }
+    }
 
     @Test
     fun testMonthToAddEventView(){
@@ -82,7 +87,18 @@ class NavigationTests {
             onNodeWithTag("create_event_view").performClick()
             waitForIdle()
             val currentRoute = navController.currentDestination?.route
-            Assert.assertEquals(currentRoute, Routes.NewMonthEventView.route + "/{month}")
+            assertEquals(currentRoute, Routes.NewMonthEventView.route + "/{month}")
+        }
+    }
+
+    @Test
+    fun testDailyToAddEventView(){
+        composeTestRule.apply {
+            // Navigating to DailyView
+            onNodeWithText("1").performClick()
+            onNodeWithTag("ADD_EVENT_BUTTON").performClick()
+            val currentRoute = navController.currentDestination?.route
+            assertEquals(currentRoute, Routes.NewDayEventView.route)
         }
     }
 }
