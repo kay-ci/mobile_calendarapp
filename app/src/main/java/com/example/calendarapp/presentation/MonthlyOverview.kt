@@ -24,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.Month
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
@@ -166,9 +170,6 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
     if(content.isNotBlank()) {
         var theColor = MaterialTheme.colorScheme.inversePrimary
         var today = LocalDate.now()
-
-        //days with events have to be differently coloured
-        viewModel.allEvents
 
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
