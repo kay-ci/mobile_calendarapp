@@ -24,7 +24,7 @@ class EventDaoTest {
     private var event2 = Event("Test2", LocalDate.now().plusDays(2),LocalDateTime.now(),LocalDateTime.now().plusHours(2).plusDays(2),"School things","Library")
 
     @Before
-    fun createDb() {
+    fun createDB() {
         val context: Context = ApplicationProvider.getApplicationContext()
 
         eventDatabase = Room.inMemoryDatabaseBuilder(context, EventRoomDatabase::class.java)
