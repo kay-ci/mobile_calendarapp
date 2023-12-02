@@ -85,6 +85,7 @@ fun DailyPage(
             navController.navigate(Routes.NewDayEventView.route)},
             modifier = Modifier
                 .align(Alignment.End)
+                .testTag("ADD_EVENT_BUTTON")
         ) {
             Icon(
                 imageVector = Icons.Filled.AddCircle,
