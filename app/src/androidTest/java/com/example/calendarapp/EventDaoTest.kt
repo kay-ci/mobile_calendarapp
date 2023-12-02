@@ -16,6 +16,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
@@ -31,8 +32,8 @@ class EventDaoTest {
 
     private var event1 = Event("Test", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson")
     private var event2 = Event("Test2", LocalDate.now().plusDays(2),LocalDateTime.now(),LocalDateTime.now().plusHours(2).plusDays(2),"School things","Library")
+    
 
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     @Before
     fun createDB() {
         val context: Context = ApplicationProvider.getApplicationContext()
