@@ -7,7 +7,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.calendarapp.data.EventDao
 import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
+import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +51,7 @@ class EventDaoTest {
     }
     @Test
     @Throws(Exception::class)
-    fun testInsertIntoDB() = runBlocking {
+    fun test_dao_insertIntoDB() = runBlocking {
         // Insert an event into the database
         eventDao.insertEvent(event1)
 
@@ -75,7 +77,7 @@ class EventDaoTest {
 
     @Test
     @Throws(Exception::class)
-    fun testGetAllEventsDAO() = runBlocking {
+    fun test_dao_getAllEvents() = runBlocking {
         eventDao.insertEvent(event1)
         eventDao.insertEvent(event2)
         withContext(Dispatchers.Main) {
@@ -100,5 +102,23 @@ class EventDaoTest {
         }
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun test_dao_getEventByDate() = runBlocking {
+        eventDao.insertEvent(event1)
+        eventDao.insertEvent(event2)
+        // Retrieve events based on the date
+        val eventsOnDate = eventDao.findEvent(LocalDate.now())
 
+        // Ensure the list is not empty
+        assertTrue(eventsOnDate.isNotEmpty())
+
+        // Get the first event from the list
+        val firstEvent = eventsOnDate[0]
+        // Assert that the first event matches the inserted event
+        assertEquals(event1.copy(id = firstEvent.id), firstEvent)
+
+        // Assert that the second event is not in the list of events retrieved by findEvent
+        assertFalse(eventsOnDate.contains(event2))
+    }
 }
