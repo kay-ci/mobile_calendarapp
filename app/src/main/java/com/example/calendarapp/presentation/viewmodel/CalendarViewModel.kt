@@ -1,5 +1,6 @@
 package com.example.calendarapp.presentation.viewmodel
 
+import android.app.Application
 import android.icu.util.Calendar
 import android.icu.util.ULocale
 import androidx.compose.runtime.MutableState
@@ -7,12 +8,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.calendarapp.data.EventRepository
+import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import java.time.LocalDateTime
 
-
-class CalendarViewModel () : ViewModel() {
+class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
     fun setDate(newDate: String){
         selectedDate = newDate
@@ -34,11 +40,22 @@ class CalendarViewModel () : ViewModel() {
 
     private val _firstWeekDay = mutableStateOf<Int>(Calendar.SUNDAY)
     val firstWeekDay : MutableState<Int> = _firstWeekDay
+    val allEvents : LiveData<List<Event>>
+    private val repository : EventRepository
+    val searchResults: MutableLiveData<List<Event>>
 
     init {
         updateMonthYear()
         updateDaysOfMonth()
         updateFirstWeekDay()
+        val eventDb = EventRoomDatabase.getInstance(application)
+        val eventDao = eventDb.eventDao()
+        repository = EventRepository(eventDao)
+
+        allEvents = repository.allEvents
+        searchResults = repository.searchResults
+
+
     }
 
     fun getMonthNumber(month: String): Int {
@@ -124,28 +141,29 @@ class CalendarViewModel () : ViewModel() {
         firstWeekDay.value = calendar.get(Calendar.DAY_OF_WEEK)
     }
 
-    private val _events = mutableStateListOf<Event>()
-    val events: List<Event> = _events
-    fun getEventsForDate(date: LocalDate): List<Event> {
-        return _events.filter { it.date == date }
+    fun getEventsForDate(date: LocalDate){
+        repository.findEvent(date)
     }
     fun addEvent(event: Event){
-        _events.add(event)
+        repository.insertEvent(event)
     }
 
     fun removeEvent(index: Int){
-        _events.removeAt(index)
+        repository.deleteEvent(index)
     }
 
-    fun containsEvent(theEvent: Event): Boolean{
+    fun updateEvent(updatedEvent: Event) {
+        repository.updateEvent(updatedEvent)
+    }
+
+
+    fun containsEvent(theEvent: Event): Boolean {
         var output: Boolean = false
-        _events.forEach{event ->
-            if(event.startTime == theEvent.startTime){
+        allEvents.value?.forEach { event ->
+            if (event.startTime == theEvent.startTime) {
                 output = true
             }
         }
-
         return output
     }
-
 }

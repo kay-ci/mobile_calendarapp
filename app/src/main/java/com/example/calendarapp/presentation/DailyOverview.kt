@@ -27,10 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,7 +43,6 @@ import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
@@ -77,7 +74,8 @@ fun DailyPage(
     viewModel: CalendarViewModel
 ){
     // Filter events based on the current date
-    val filteredEvents = viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
+    viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
+    val events by viewModel.searchResults.observeAsState(listOf())
     val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
@@ -95,7 +93,7 @@ fun DailyPage(
                 modifier = Modifier.size(30.dp)
             )
         }
-        DailyEventsTimeline(events = filteredEvents, modifier, navController)
+        DailyEventsTimeline(events = events, modifier, navController, viewModel)
     }
 }
 // Should be added at the top of every view to go to previous page.
@@ -118,7 +116,17 @@ fun NavigationBar(navController: NavHostController) {
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DailyEventsTimeline(events: List<Event>, modifier: Modifier = Modifier, navController: NavHostController){
+fun DailyEventsTimeline(
+    events: List<Event>,
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: CalendarViewModel
+){
+    val eventList = events ?: emptyList()
+    val currentDay = LocalDate.parse(viewModel.selectedDate)
+    val filteredEvents = eventList.filter { event ->
+        event.startTime.toLocalDate() == currentDay
+    }
     Column(modifier = modifier
         .verticalScroll(rememberScrollState())
         .fillMaxWidth()) {
@@ -136,7 +144,7 @@ fun DailyEventsTimeline(events: List<Event>, modifier: Modifier = Modifier, navC
                     )
                 }
             }
-            ListEvents(events, navController = navController)
+            ListEvents(filteredEvents, navController = navController)
         }
     }
 }

@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace 'com.example.calendarapp'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.calendarapp"
@@ -20,6 +20,11 @@ android {
         testInstrumentationRunner "com.example.calendarapp.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
         }
     }
 
@@ -82,6 +87,13 @@ dependencies {
     androidTestImplementation 'com.google.dagger:hilt-android-testing:2.44.2'
     kaptTest 'com.google.dagger:hilt-android-compiler:2.44.2'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.44.2'
+    // Database
+    implementation("androidx.room:room-runtime:2.6.0")
+    implementation("androidx.room:room-ktx:2.6.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("androidx.compose.foundation:foundation-layout-android:1.5.4")
+    annotationProcessor("androidx.room:room-compiler:2.6.0")
+    kapt("androidx.room:room-compiler:2.6.0")
 
 
 }
