@@ -121,4 +121,27 @@ class EventDaoTest {
         // Assert that the second event is not in the list of events retrieved by findEvent
         assertFalse(eventsOnDate.contains(event2))
     }
+
+    @Test
+    @Throws(Exception::class)
+    fun test_dao_updateEvents() = runBlocking {
+        eventDao.insertEvent(event1)
+        withContext(Dispatchers.Main) {
+            eventDao.updateEvent(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"))
+            // Observe the LiveData
+            val allEventsLiveData = eventDao.getAllEvents()
+            allEventsLiveData.observeForever { allEvents ->
+                // Get the first event from the list
+                val firstEvent = allEvents[0]
+
+                // Assert that the first and second event matches the inserted events
+                assertEquals(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"), firstEvent)
+
+                // Stop observing to avoid leaks
+                allEventsLiveData.removeObserver {}
+            }
+        }
+    }
+
+
 }
