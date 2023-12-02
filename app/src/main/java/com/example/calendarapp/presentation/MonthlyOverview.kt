@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +45,6 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
     Column (modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)
         .background(Color.White)
     ) {
 
@@ -62,6 +62,7 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
                 navController.navigate(Routes.NewMonthEventView.route + "/${viewModel.currentMonth.value}") },
                 modifier = Modifier
                     .fillMaxWidth()
+                    .testTag("create_event_view")
             ) {
                 Icon(
                     imageVector = Icons.Filled.AddCircle,

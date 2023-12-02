@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.calendarapp.domain.Event
@@ -94,6 +98,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { title = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("title"),
                 )
             }
             Column(){
@@ -106,6 +111,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { description = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("description"),
                 )
             }
             Column(){
@@ -118,6 +124,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { location = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("location"),
                 )
             }
             Column(){
@@ -144,6 +151,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { startHour = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("start_hour"),
                 )
             }
             Column(){
@@ -156,6 +164,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { startMinute = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("start_minute"),
                 )
             }
         }
@@ -170,6 +179,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { endHour = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("end_hour"),
                 )
             }
             Column(){
@@ -182,6 +192,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     onValueChange = { endMinute = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("end_minute"),
                 )
             }
         }
@@ -212,6 +223,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     .fillMaxWidth()
             ){
                 Text("New Event",
+                    modifier = Modifier.testTag("new_event_title"),
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White)
@@ -233,7 +245,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     catch(e: Exception){
                         //show error message
                     }
-                }){
+                }, modifier = Modifier.padding(5.dp).testTag("save_event")){
                     Text("save")
                 }
             }
@@ -252,6 +264,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { title = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("title")
                 )
             }
             Column(){
@@ -264,6 +277,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { description = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("description")
                 )
             }
             Column(){
@@ -276,6 +290,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { location = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("location")
                 )
             }
         }
@@ -290,6 +305,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { startHour = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("start_hour")
                 )
             }
             Column(){
@@ -302,6 +318,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { startMinute = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("start_minute")
                 )
             }
         }
@@ -316,6 +333,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { endHour = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("end_hour")
                 )
             }
             Column(){
@@ -328,6 +346,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     onValueChange = { endMinute = it},
                     maxLines = 1,
                     modifier = Modifier.fillMaxWidth()
+                        .testTag("end_minute")
                 )
             }
         }
