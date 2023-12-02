@@ -7,11 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.calendarapp.data.EventDao
 import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.domain.Event
-import junit.framework.TestCase
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -19,13 +18,12 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runner.manipulation.Ordering
 import java.io.IOException
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 
+//THE TESTS MUST BE RUN ONE AT A TIME BECAUSE SOME ARE RUN ON MAIN THREAD FOR OBSERVING THE LIVE DATA
 @RunWith(AndroidJUnit4::class)
 class EventDaoTest {
     private lateinit var eventDao: EventDao
@@ -34,10 +32,10 @@ class EventDaoTest {
     private var event1 = Event("Test", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson")
     private var event2 = Event("Test2", LocalDate.now().plusDays(2),LocalDateTime.now(),LocalDateTime.now().plusHours(2).plusDays(2),"School things","Library")
 
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     @Before
     fun createDB() {
         val context: Context = ApplicationProvider.getApplicationContext()
-
         eventDatabase = Room.inMemoryDatabaseBuilder(context, EventRoomDatabase::class.java)
             .allowMainThreadQueries()
             .build()
