@@ -47,7 +47,6 @@ class EventDaoTest {
     fun closeDb() {
         eventDatabase.close()
     }
-
     @Test
     @Throws(Exception::class)
     fun testInsertIntoDB() = runBlocking {
@@ -67,6 +66,33 @@ class EventDaoTest {
 
                 // Assert that the first event matches the inserted event
                 assertEquals(event1, firstEvent)
+
+                // Stop observing to avoid leaks
+                allEventsLiveData.removeObserver {}
+            }
+        }
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testGetAllEventsDAO() = runBlocking {
+        eventDao.insertEvent(event1)
+        eventDao.insertEvent(event2)
+        withContext(Dispatchers.Main) {
+            // Observe the LiveData
+            val allEventsLiveData = eventDao.getAllEvents()
+            allEventsLiveData.observeForever { allEvents ->
+                // Ensure the list is not empty
+                assertTrue(allEvents.isNotEmpty())
+
+                // Get the first event from the list
+                val firstEvent = allEvents[0]
+                // Get the second event from the list
+                val secondEvent = allEvents[1]
+
+                // Assert that the first and second event matches the inserted events
+                assertEquals(event1, firstEvent)
+                assertEquals(event2, secondEvent)
 
                 // Stop observing to avoid leaks
                 allEventsLiveData.removeObserver {}
