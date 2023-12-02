@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
@@ -13,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -34,6 +37,8 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarViewModel) {
+    val allEvents by viewModel.allEvents.observeAsState()
+    var errorMessage by rememberSaveable {mutableStateOf("")}
     var startMinute by rememberSaveable { mutableStateOf("") }
     var startHour by rememberSaveable { mutableStateOf("") }
     var endMinute by rememberSaveable { mutableStateOf("") }
@@ -64,22 +69,33 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     textAlign = TextAlign.Center,
                     color = Color.White)
                 Button(onClick = {
+                    errorMessage = ""
+                    if(title.isBlank())errorMessage += "Title is mandatory. "
+                    if(startHour.isBlank())errorMessage += "Start hour is mandatory. "
+                    if(startMinute.isBlank())errorMessage += "Start Minute is mandatory. "
+                    if(endHour.isBlank())errorMessage += "End hour is mandatory. "
+                    if(endMinute.isBlank())errorMessage += "End minute is mandatory. "
+                    if(day.isBlank())errorMessage += "Day is mandatory. "
                     try{
                         val date = LocalDate.of(year, viewModel.getMonthNumber(month), day.toInt())
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
                         val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
-                            throw Exception("chronologically impossible")
+                            errorMessage += "Event cannot end before it starts. "
                         }
                         val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher, program)
-                        if(viewModel.containsEvent(newEvent)){
-                            throw Exception("time is already used by another event")
+                        allEvents?.forEach {loopEvent ->
+                            if(loopEvent.startTime == newEvent.startTime){
+                                errorMessage += "Another event is already using that time. "
+                            }
                         }
-                        viewModel.addEvent(newEvent)
-                        navController.popBackStack()
+                        if(errorMessage.isBlank()){
+                            viewModel.addEvent(newEvent)
+                            navController.popBackStack()
+                        }
                     }
                     catch(e: Exception){
-                        //show error message
+                        errorMessage += "Time information not in expected format"
                     }
                 }){
                     Text("save")
@@ -87,7 +103,10 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
             }
         }
         item(){
-            Text(month + " "+ year)
+            Text(errorMessage, color = Color.Red)
+        }
+        item(){
+            Text("$month $year")
         }
         item(){
             Column(){
@@ -221,6 +240,9 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                         .testTag("end_minute"),
                 )
             }
+        }
+        item(){
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
