@@ -45,7 +45,6 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
     Column (modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)
         .background(Color.White)
     ) {
 

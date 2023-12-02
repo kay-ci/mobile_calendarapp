@@ -2,17 +2,13 @@ package com.example.calendarapp
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.ComposeNavigator
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.calendarapp.presentation.MainActivity
@@ -24,11 +20,12 @@ import org.junit.Rule
 import org.junit.runner.RunWith
 import com.example.calendarapp.presentation.NavigationComponent
 import com.example.calendarapp.presentation.Routes
-import com.example.calendarapp.presentation.ViewPage
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
-import com.example.calendarapp.ui.theme.CalendarAppTheme
 import org.junit.Assert
 import org.junit.Test
+import java.time.LocalDate
+import java.time.Month
+
 
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
@@ -97,8 +94,24 @@ class NavigationTests {
             // Navigating to DailyView
             onNodeWithText("1").performClick()
             onNodeWithTag("ADD_EVENT_BUTTON").performClick()
+            waitForIdle()
+
             val currentRoute = navController.currentDestination?.route
             assertEquals(currentRoute, Routes.NewDayEventView.route)
         }
     }
+
+    @Test
+    fun testNewDavEventToDaily(){
+        composeTestRule.apply {
+            // Navigating to add event view
+            onNodeWithText("1").performClick()
+            onNodeWithTag("ADD_EVENT_BUTTON").performClick()
+            onNodeWithTag("BACK_BUTTON").performClick()
+
+            val currentRoute = navController.currentDestination?.route
+            assertEquals(currentRoute, Routes.DailyView.route)
+        }
+    }
+
 }
