@@ -115,7 +115,7 @@ class EventDaoTest {
 
         // Get the first event from the list
         val firstEvent = eventsOnDate[0]
-        // Assert that the first event matches the inserted event
+
         assertEquals(event1.copy(id = firstEvent.id), firstEvent)
 
         // Assert that the second event is not in the list of events retrieved by findEvent
@@ -134,7 +134,7 @@ class EventDaoTest {
                 // Get the first event from the list
                 val firstEvent = allEvents[0]
 
-                // Assert that the first and second event matches the inserted events
+                // Assert that the event in the db has been changed
                 assertEquals(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"), firstEvent)
 
                 // Stop observing to avoid leaks
@@ -143,5 +143,30 @@ class EventDaoTest {
         }
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun test_dao_deleteEvent() = runBlocking {
+        eventDao.insertEvent(event1)
+        eventDao.insertEvent(event2)
+        withContext(Dispatchers.Main) {
+            eventDao.updateEvent(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"))
+            // Observe the LiveData
+            val allEventsLiveData = eventDao.getAllEvents()
+            allEventsLiveData.observeForever { allEvents ->
+                // Get the first event from the list
+                val firstEvent = allEvents[0]
 
+                // Get the second event from the list
+                val secondEvent = allEvents[1]
+
+                firstEvent.id?.let { eventDao.deleteEvent(it) }
+                secondEvent.id?.let { eventDao.deleteEvent(it) }
+
+                assertTrue(allEvents.isEmpty())
+
+                // Stop observing to avoid leaks
+                allEventsLiveData.removeObserver {}
+            }
+        }
+    }
 }
