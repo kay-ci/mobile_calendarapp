@@ -172,6 +172,17 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
         var theColor = MaterialTheme.colorScheme.inversePrimary
         var today = LocalDate.now()
 
+
+        val allEvents by viewModel.allEvents.observeAsState()
+        allEvents?.forEach {loopEvent ->
+            val sameYear = loopEvent.startTime.year == currentYear
+            val sameMonth = loopEvent.startTime.monthValue == viewModel.getMonthNumber(currentMonth)
+            val sameDay = loopEvent.startTime.dayOfMonth.toString() == content
+            if(sameYear && sameMonth && sameDay){
+                theColor = MaterialTheme.colorScheme.secondary
+            }
+        }
+
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
             theColor = MaterialTheme.colorScheme.tertiary
