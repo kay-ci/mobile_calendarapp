@@ -24,6 +24,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +40,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.Month
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
@@ -165,12 +169,28 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
                 currentMonth: String, viewModel: CalendarViewModel){
     if(content.isNotBlank()) {
+        var theColor = MaterialTheme.colorScheme.inversePrimary
+        var today = LocalDate.now()
+
+
+        val allEvents by viewModel.allEvents.observeAsState()
+        allEvents?.forEach {loopEvent ->
+            val sameYear = loopEvent.startTime.year == currentYear
+            val sameMonth = loopEvent.startTime.monthValue == viewModel.getMonthNumber(currentMonth)
+            val sameDay = loopEvent.startTime.dayOfMonth.toString() == content
+            if(sameYear && sameMonth && sameDay){
+                theColor = MaterialTheme.colorScheme.secondary
+            }
+        }
+
+        //current day has to be differently coloured
+        if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
+            theColor = MaterialTheme.colorScheme.tertiary
+        }
         Card(
             modifier = Modifier
                 .padding(vertical = 2.dp, horizontal = 4.dp),
-            colors = (CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )),
+            colors = (CardDefaults.cardColors(containerColor = theColor)),
             onClick = {
                 if(currentYear !=0 && currentMonth != ""){
                     // Parse the selected day to LocalDate
