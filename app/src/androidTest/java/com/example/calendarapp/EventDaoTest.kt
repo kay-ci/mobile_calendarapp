@@ -30,9 +30,9 @@ class EventDaoTest {
     private lateinit var eventDao: EventDao
     private lateinit var eventDatabase : EventRoomDatabase
 
-    private var event1 = Event("Test", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson")
-    private var event2 = Event("Test2", LocalDate.now().plusDays(2),LocalDateTime.now(),LocalDateTime.now().plusHours(2).plusDays(2),"School things","Library")
-    
+    private var event1 = Event("Test", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson","Teacher","Computer Science")
+    private var event2 = Event("Test2", LocalDate.now().plusDays(2),LocalDateTime.now(),LocalDateTime.now().plusHours(2).plusDays(2),"School things","Library","Teacher","Computer Science")
+
 
     @Before
     fun createDB() {
@@ -126,7 +126,7 @@ class EventDaoTest {
     fun test_dao_updateEvents() = runBlocking {
         eventDao.insertEvent(event1)
         withContext(Dispatchers.Main) {
-            eventDao.updateEvent(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"))
+            eventDao.updateEvent(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson","Teacher","Computer Science"))
             // Observe the LiveData
             val allEventsLiveData = eventDao.getAllEvents()
             allEventsLiveData.observeForever { allEvents ->
@@ -134,7 +134,7 @@ class EventDaoTest {
                 val firstEvent = allEvents[0]
 
                 // Assert that the event in the db has been changed
-                assertEquals(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"), firstEvent)
+                assertEquals(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson","Teacher","Computer Science"), firstEvent)
 
                 // Stop observing to avoid leaks
                 allEventsLiveData.removeObserver {}
@@ -148,7 +148,6 @@ class EventDaoTest {
         eventDao.insertEvent(event1)
         eventDao.insertEvent(event2)
         withContext(Dispatchers.Main) {
-            eventDao.updateEvent(Event("Changed event", LocalDate.now(),LocalDateTime.now(),LocalDateTime.now().plusHours(2),"Description","Dawson"))
             // Observe the LiveData
             val allEventsLiveData = eventDao.getAllEvents()
             allEventsLiveData.observeForever { allEvents ->
