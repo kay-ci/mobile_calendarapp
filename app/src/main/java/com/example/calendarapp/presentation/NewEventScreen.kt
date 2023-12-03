@@ -84,9 +84,19 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                             errorMessage += "Event cannot end before it starts. "
                         }
                         val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher, program)
+                        var counter = 0
                         allEvents?.forEach {loopEvent ->
-                            if(loopEvent.startTime == newEvent.startTime){
-                                errorMessage += "Another event is already using that time. "
+                            if(loopEvent.startTime.dayOfMonth.toString() == day){
+                                //make sure it starts and ends either before or after
+                                var startsBefore = start < loopEvent.startTime
+                                var endsBefore = end < loopEvent.startTime
+                                var startsAfter = start > loopEvent.endTime
+                                var endsAfter = end > loopEvent.endTime
+                                if(!(startsBefore && endsBefore || startsAfter || endsAfter) && counter == 0){
+                                    errorMessage += "Selected time is already used by another event (${loopEvent.title}). "
+                                    counter++
+                                    //without the counter, the errorMessage can be appended many times.
+                                }
                             }
                         }
                         if(errorMessage.isBlank()){
@@ -95,7 +105,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                         }
                     }
                     catch(e: Exception){
-                        errorMessage += "Time information not in expected format"
+                        errorMessage += "Time information not in expected format (includes day field). "
                     }
                 }){
                     Text("save")
@@ -251,6 +261,8 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewModel) {
+    val allEvents by viewModel.allEvents.observeAsState()
+    var errorMessage by rememberSaveable {mutableStateOf("")}
     var startMinute by rememberSaveable { mutableStateOf("") }
     var startHour by rememberSaveable { mutableStateOf("") }
     var endMinute by rememberSaveable { mutableStateOf("") }
@@ -278,22 +290,42 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     textAlign = TextAlign.Center,
                     color = Color.White)
                 Button(onClick = {
+                    errorMessage = ""
+                    if(title.isBlank())errorMessage += "Title is mandatory. "
+                    if(startHour.isBlank())errorMessage += "Start hour is mandatory. "
+                    if(startMinute.isBlank())errorMessage += "Start Minute is mandatory. "
+                    if(endHour.isBlank())errorMessage += "End hour is mandatory. "
+                    if(endMinute.isBlank())errorMessage += "End minute is mandatory. "
                     try{
-                        val date = LocalDate.parse(viewModel.selectedDate)
+                        var date = LocalDate.parse(viewModel.selectedDate)
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
                         val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
-                            throw Exception()
+                            errorMessage += "Event cannot end before it starts. "
                         }
-                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher = teacher, program = program)
-                        if(viewModel.containsEvent(newEvent)){
-                            throw Exception()
+                        val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher, program)
+                        var counter = 0
+                        allEvents?.forEach {loopEvent ->
+                            if(loopEvent.startTime.dayOfMonth == date.dayOfMonth){
+                                //make sure it starts and ends either before or after
+                                var startsBefore = start < loopEvent.startTime
+                                var endsBefore = end < loopEvent.startTime
+                                var startsAfter = start > loopEvent.endTime
+                                var endsAfter = end > loopEvent.endTime
+                                if(!(startsBefore && endsBefore || startsAfter && endsAfter) && counter == 0){
+                                    errorMessage += "Selected time is already used by another event (${loopEvent.title}). "
+                                    counter++
+                                    //without the counter, the errorMessage can be appended many times.
+                                }
+                            }
                         }
-                        viewModel.addEvent(newEvent)
-                        navController.popBackStack()
+                        if(errorMessage.isBlank()){
+                            viewModel.addEvent(newEvent)
+                            navController.popBackStack()
+                        }
                     }
-                    catch(e: Exception){
-                        //show error message
+                    catch(e: Exception) {
+                        errorMessage += "Time information not in expected format (includes day field). "
                     }
                 }, modifier = Modifier.padding(5.dp).testTag("save_event")){
                     Text("save")
@@ -301,6 +333,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
         }
         item(){
+            Text(errorMessage, color = Color.Red)
             Text(currentDate)
         }
         item(){
