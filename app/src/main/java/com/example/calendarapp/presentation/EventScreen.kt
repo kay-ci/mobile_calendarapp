@@ -40,6 +40,7 @@ import java.time.LocalDateTime
 @Composable
 fun EventScreen(event: Event, navController: NavHostController, viewModel: CalendarViewModel){
     val allEvents by viewModel.allEvents.observeAsState()
+    var errorMessage by rememberSaveable {mutableStateOf("")}
     var editable: Boolean by rememberSaveable{mutableStateOf(false)}
     var title by rememberSaveable { mutableStateOf(event.title) }
     var description by rememberSaveable { mutableStateOf(event.description) }
@@ -96,30 +97,49 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     Text("Edit")
                 }
                 Button(onClick = {
-                    try {
-                        val endTime = LocalDateTime.of(
-                            year.toInt(),
-                            month.toInt(),
-                            day.toInt(),
-                            endHour.toInt(),
-                            endMinute.toInt()
-                        )
-                        val newEvent = Event(
-                            event.id,
-                            title,
-                            event.date,
-                            event.startTime,
-                            endTime,
-                            description,
-                            location,
-                            teacher,
-                            program
-                        )
+                    errorMessage = ""
+                    if(title.isBlank())errorMessage += "Title is mandatory. "
+                    if(endHour.isBlank())errorMessage += "End hour is mandatory. "
+                    if(endMinute.isBlank())errorMessage += "End minute is mandatory"
+                    val endTime = LocalDateTime.of(
+                        year.toInt(),
+                        month.toInt(),
+                        day.toInt(),
+                        endHour.toInt(),
+                        endMinute.toInt()
+                    )
+                    if(endTime < event.startTime){
+                        errorMessage += "Event cannot end before it starts. "
+                    }
+                    val newEvent = Event(
+                        event.id,
+                        title,
+                        event.date,
+                        event.startTime,
+                        endTime,
+                        description,
+                        location,
+                        teacher,
+                        program
+                    )
+                    var counter = 0
+                    allEvents?.forEach {loopEvent ->
+                        if(loopEvent.startTime.dayOfMonth.toString() == day){
+                            //make sure it starts and ends either before or after
+                            var startsBefore = newEvent.startTime < loopEvent.startTime
+                            var endsBefore = newEvent.endTime < loopEvent.startTime
+                            var startsAfter = newEvent.startTime > loopEvent.endTime
+                            var endsAfter = newEvent.endTime > loopEvent.endTime
+                            if(!(startsBefore && endsBefore || startsAfter || endsAfter) && counter == 0 && loopEvent.id != newEvent.id){
+                                errorMessage += "Selected time is already used by another event (${loopEvent.title}). "
+                                counter++
+                                //without the counter, the errorMessage can be appended many times.
+                            }
+                        }
+                    }
+                    if(errorMessage.isBlank()){
                         viewModel.updateEvent(newEvent)
                         navController.popBackStack()
-                    }
-                    catch(e: Exception){
-                        //show error
                     }
                 }){
                     Text("Save")
@@ -136,6 +156,9 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                 }
             }
         } }
+        item(){
+            Text(errorMessage, color = Color.Red)
+        }
         item{
             Column(){
                 Text(
