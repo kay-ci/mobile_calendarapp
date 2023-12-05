@@ -13,4 +13,8 @@ object  RetrofitInstance {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+    val weatherService: WeatherService by lazy {
+        retrofit.create(WeatherService::class.java)
+    }
+
 }
