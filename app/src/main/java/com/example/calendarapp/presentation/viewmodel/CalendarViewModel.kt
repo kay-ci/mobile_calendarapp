@@ -3,6 +3,7 @@ package com.example.calendarapp.presentation.viewmodel
 import android.app.Application
 import android.icu.util.Calendar
 import android.icu.util.ULocale
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -11,10 +12,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.calendarapp.data.EventRepository
 import com.example.calendarapp.data.EventRoomDatabase
+import com.example.calendarapp.data.WeatherRepository
 import com.example.calendarapp.domain.Event
+import com.example.calendarapp.domain.WeatherData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -166,4 +175,32 @@ class CalendarViewModel (application: Application) : ViewModel() {
         }
         return output
     }
+
+    private val weatherRepository = WeatherRepository()
+
+    private val _weatherData = MutableLiveData<WeatherData>()
+    val weatherData: LiveData<WeatherData> get() = _weatherData
+
+    fun fetchWeatherData(latitude: String, longitude: String) {
+        weatherRepository.getCurrentWeatherData(latitude, longitude)
+            .enqueue(object : Callback<WeatherData> {
+                override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
+                    if (response.isSuccessful) {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            _weatherData.value = response.body()!!
+                        }
+                    } else {
+                        // Handle error
+                        Log.e("Weather", "Error fetching weather data: ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<WeatherData>, t: Throwable) {
+                    // Handle failure
+                    Log.e("Weather", "Failure while fetching weather data: ${t.message}")
+                }
+            })
+    }
+
+
+
 }

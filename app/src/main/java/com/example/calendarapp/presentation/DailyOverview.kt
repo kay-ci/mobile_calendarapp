@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -73,6 +75,8 @@ fun DailyPage(
     navController: NavHostController,
     viewModel: CalendarViewModel
 ){
+
+
     // Filter events based on the current date
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
     val events by viewModel.searchResults.observeAsState(listOf())

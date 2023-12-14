@@ -1,4 +1,6 @@
 package com.example.calendarapp.presentation
+import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,12 +26,17 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,11 +44,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
@@ -51,6 +62,36 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
         .fillMaxSize()
         .background(Color.White)
     ) {
+        val weatherData by viewModel.weatherData.observeAsState()
+        // Fetch weather data when the page is loaded
+        DisposableEffect(Unit) {
+            viewModel.fetchWeatherData("21", "24")
+            onDispose {}
+        }
+        Row(){
+            weatherData?.let {
+                if (it != null) {
+                    Text(
+                        text = "${it.main?.temp?.roundToInt()}",
+                        modifier = Modifier.padding(16.dp),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
+                    )
+                }
+                it.weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Log.d("test", "Icon URL: $iconUrl")
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
+            }
+        }
+
 
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
@@ -78,6 +119,8 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
 
     }
 }
+
+
 
 
 // Display month, year and buttons
