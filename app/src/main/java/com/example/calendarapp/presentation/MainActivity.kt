@@ -4,12 +4,14 @@ import android.Manifest
 import android.app.Application
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,40 +39,69 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        getCurrentLocation()
+    }
+
+    private fun getCurrentLocation(){
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
-            fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
-                override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+        fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
+            override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
 
-                override fun isCancellationRequested() = false
-            })
-                .addOnSuccessListener { location: Location? ->
-                    if (location == null)
-                        Toast.makeText(this, "Cannot get location.", Toast.LENGTH_SHORT).show()
-                    else {
-                        val lat = location.latitude
-                        val lon = location.longitude
-                        setContent {
-                            CalendarAppTheme {
-                                // A surface container using the 'background' color from the theme
-                                Surface(
-                                    modifier = Modifier.fillMaxSize(),
-                                    color = MaterialTheme.colorScheme.background
-                                ) {
-                                    HomeView(lat, lon)
-                                }
-                            }
+            override fun isCancellationRequested() = false
+        })
+            .addOnSuccessListener { location: Location? ->
+                val lat = location!!.latitude
+                val lon = location!!.longitude
+                setContent {
+                    CalendarAppTheme {
+                        // A surface container using the 'background' color from the theme
+                        Surface(
+                            modifier = Modifier.fillMaxSize(),
+                            color = MaterialTheme.colorScheme.background
+                        ) {
+                            showHomeView(lat, lon)
                         }
                     }
+                }
+            }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, you can proceed to get the location
+                getCurrentLocation()
+            } else {
+                // Permission denied
+                showHomeView(0.0, 0.0)
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private fun showHomeView(lat: Double, lon: Double) {
+        setContent {
+            CalendarAppTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    HomeView(lat, lon)
+                }
+            }
         }
     }
-}
+
 
 
     @Composable
