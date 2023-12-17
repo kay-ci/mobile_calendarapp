@@ -51,7 +51,12 @@ class MainActivity : ComponentActivity() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            requestPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
         }
         fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
             override fun onCanceledRequested(p0: OnTokenCanceledListener) = CancellationTokenSource().token
@@ -59,8 +64,8 @@ class MainActivity : ComponentActivity() {
             override fun isCancellationRequested() = false
         })
             .addOnSuccessListener { location: Location? ->
-                val lat = location!!.latitude
-                val lon = location!!.longitude
+                val lat = location?.latitude
+                val lon = location?.longitude
                 setContent {
                     CalendarAppTheme {
                         // A surface container using the 'background' color from the theme
@@ -68,7 +73,9 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.fillMaxSize(),
                             color = MaterialTheme.colorScheme.background
                         ) {
-                            showHomeView(lat, lon)
+                            if (lat != null && lon != null) {
+                                showHomeView(lat, lon)
+                            }
                         }
                     }
                 }
@@ -77,14 +84,16 @@ class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private val requestPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission granted, you can proceed to get the location
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions: Map<String, Boolean> ->
+            // Check if both permissions are granted
+            if (permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true &&
+                permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
+                // Both permissions granted, you can proceed to get the location
                 getCurrentLocation()
             } else {
-                // Permission denied
+                // Permissions denied
                 showHomeView(0.0, 0.0)
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Location permissions denied", Toast.LENGTH_SHORT).show()
             }
         }
 
