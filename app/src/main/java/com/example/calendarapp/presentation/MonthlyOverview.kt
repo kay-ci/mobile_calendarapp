@@ -32,32 +32,26 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
-import coil.request.ImageRequest
-import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
-fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
+fun MonthView(
+    navController: NavHostController,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double
+) {
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
@@ -65,7 +59,7 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
         val weatherData by viewModel.weatherData.observeAsState()
         // Fetch weather data when the page is loaded
         DisposableEffect(Unit) {
-            viewModel.fetchWeatherData("21", "24")
+            viewModel.fetchWeatherData(lat.toString(), lon.toString())
             onDispose {}
         }
         Row(){
@@ -81,7 +75,6 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
                 }
                 it.weather?.get(0)?.icon.let { iconCode ->
                     val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-                    Log.d("test", "Icon URL: $iconUrl")
                     Image(
                         painter = rememberImagePainter(iconUrl),
                         contentDescription = "Weather Icon",
