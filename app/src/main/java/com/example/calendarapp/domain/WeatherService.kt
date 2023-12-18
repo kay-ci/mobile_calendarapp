@@ -10,4 +10,10 @@ interface WeatherService {
         @Query("lat") latitude: String?,
         @Query("lon") longitude: String?
     ): Call<WeatherData>
+
+    @GET("forecast?appid=4cb1c77a59428d71252f0729a674a604&units=metric")
+    fun getFiveDaysWeather(
+        @Query("lat") latitude: String?,
+        @Query("lon") longitude: String?
+    ): Call<ForecastData>
 }

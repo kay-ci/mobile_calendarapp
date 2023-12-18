@@ -17,6 +17,7 @@ import com.example.calendarapp.data.EventRepository
 import com.example.calendarapp.data.EventRoomDatabase
 import com.example.calendarapp.data.WeatherRepository
 import com.example.calendarapp.domain.Event
+import com.example.calendarapp.domain.ForecastData
 import com.example.calendarapp.domain.WeatherData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -24,8 +25,12 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.format.TextStyle
+import java.util.Date
+import java.util.Locale
 
 class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
@@ -181,12 +186,17 @@ class CalendarViewModel (application: Application) : ViewModel() {
     private val _weatherData = MutableLiveData<WeatherData>()
     val weatherData: LiveData<WeatherData> get() = _weatherData
 
+    private val _weatherDataForecast = MutableLiveData<ForecastData>()
+
+    val weatherDataForecast: LiveData<ForecastData> get() = _weatherDataForecast
+
     fun fetchWeatherData(latitude: String, longitude: String) {
         weatherRepository.getCurrentWeatherData(latitude, longitude)
             .enqueue(object : Callback<WeatherData> {
                 override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
                     if (response.isSuccessful) {
                         viewModelScope.launch(Dispatchers.Main) {
+                            Log.d("currentDay",response.body().toString())
                             _weatherData.value = response.body()!!
                         }
                     } else {
@@ -201,6 +211,47 @@ class CalendarViewModel (application: Application) : ViewModel() {
             })
     }
 
+    fun fetchNextWeatherData(latitude: String, longitude: String) {
+        weatherRepository.getFiveDaysWeather(latitude, longitude)
+            .enqueue(object : Callback<ForecastData> {
+                override fun onResponse(call: Call<ForecastData>, response: Response<ForecastData>) {
+                    if (response.isSuccessful) {
+                        viewModelScope.launch(Dispatchers.Main) {
+                            Log.d("test",response.body().toString())
+                            _weatherDataForecast.value = response.body()!!
+                        }
+                    } else {
+                        // Handle error
+                        Log.e("Weather", "Error fetching weather data: ${response.code()}")
+                    }
+                }
+                override fun onFailure(call: Call<ForecastData>, t: Throwable) {
+                    // Handle failure
+                    Log.e("Weather", "Failure while fetching weather data: ${t.message}")
+                }
+            })
+    }
 
+    fun getNextFiveDays(): List<String> {
+        val currentDayOfWeek = LocalDate.now().dayOfWeek
+        val nextFiveDays = mutableListOf<String>()
+
+        for (i in 1..5) {
+            val nextDay = currentDayOfWeek.plus(i.toLong())
+            val dayName = nextDay.getDisplayName(TextStyle.FULL, Locale.getDefault())
+            nextFiveDays.add(dayName)
+        }
+
+        return nextFiveDays
+    }
+
+    fun getDayOfWeek(dateString: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val date: Date = dateFormat.parse(dateString) ?: Date()
+
+        // Format the date to get the day of the week
+        val dayOfWeekFormat = SimpleDateFormat("EEEE", Locale.getDefault())
+        return dayOfWeekFormat.format(date)
+    }
 
 }

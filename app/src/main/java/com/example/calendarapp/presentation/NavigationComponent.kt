@@ -16,6 +16,9 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
         composable(Routes.MonthView.route){
             MonthView(navController, viewModel, lat, lon)
         }
+        composable(Routes.WeatherForecast.route) {
+            WeatherDetailScreen(viewModel, lat, lon)
+        }
 
         composable(Routes.DailyView.route){
             ViewPage(navController, viewModel)
