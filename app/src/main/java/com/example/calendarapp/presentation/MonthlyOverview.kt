@@ -70,7 +70,7 @@ fun MonthView(
     if(holidayData == "" ) {
         viewModel.fetchHolidayData()
         viewModel.getHolidaysFromFile()
-        viewModel.getAllHolidays()
+        //viewModel.getAllHolidays()
     }
 
     // This uses the fetched data and it works!
@@ -134,7 +134,7 @@ fun MonthView(
                     modifier = Modifier.size(40.dp)
                 )
             }
-//            Text(text = prettyJson)
+            Text(text = prettyJson)
         }
 
     }
