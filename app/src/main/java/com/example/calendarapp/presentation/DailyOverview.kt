@@ -1,7 +1,5 @@
 package com.example.calendarapp.presentation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,11 +45,9 @@ import java.time.format.DateTimeFormatter
 
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
 fun ViewPage(
@@ -66,17 +62,19 @@ fun ViewPage(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(
     modifier: Modifier,
     navController: NavHostController,
     viewModel: CalendarViewModel
 ){
+
+
     // Filter events based on the current date
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
     val events by viewModel.searchResults.observeAsState(listOf())
     val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
+
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, viewModel)
@@ -114,28 +112,53 @@ fun NavigationBar(navController: NavHostController) {
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyEventsTimeline(
     events: List<Event>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: CalendarViewModel
-){
-    val eventList = events ?: emptyList()
+) {
     val currentDay = LocalDate.parse(viewModel.selectedDate)
-    val filteredEvents = eventList.filter { event ->
+    val filteredEvents = events.filter { event ->
         event.startTime.toLocalDate() == currentDay
     }
-    Column(modifier = modifier
-        .verticalScroll(rememberScrollState())
-        .fillMaxWidth()) {
-        Row{
+    viewModel.getHolidaysForDate(currentDay)
+    val holidays by viewModel.dayHolidays.observeAsState()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+    ) {
+        Row {
             //Column for displaying the time
             Column {
+                //Display Holiday Name
+                holidays?.forEach { holiday ->
+                    Card(
+                        modifier = Modifier
+                            .padding(vertical = 2.dp, horizontal = 4.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(35.dp)
+                                .padding(5.dp)
+                        ) {
+                            Text(
+                                text = holiday.name,
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
                 //Loop over all the hours in a day to display them
-                for(hour in (0..23)){
-                    Text(text = "${hour}:00",
+                for (hour in (0..23)) {
+                    Text(
+                        text = "${hour}:00",
                         modifier = modifier
                             .padding(bottom = 10.dp, end = 10.dp)
                             .height(30.dp),
@@ -149,7 +172,6 @@ fun DailyEventsTimeline(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ListEvents(events: List<Event>, navController: NavHostController) {
     //Column for the displaying the events
@@ -175,7 +197,6 @@ private fun ListEvents(events: List<Event>, navController: NavHostController) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier, navController: NavHostController) {
     Card(
