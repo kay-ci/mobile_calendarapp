@@ -4,4 +4,8 @@
     <string name="right_arrow">Right arrow</string>
     <string name="left_arrow">Left arrow</string>
     <string name="back_button">BACK_BUTTON</string>
+    <string name="go_to_previous_page">Go to previous page</string>
+    <string name="back_arrow">back arrow</string>
+    <string name="edit">Edit</string>
+    <string name="title_is_mandatory">"Title is mandatory. "</string>
 </resources>

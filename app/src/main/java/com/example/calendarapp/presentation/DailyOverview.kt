@@ -107,7 +107,7 @@ fun NavigationBar(navController: NavHostController) {
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.testTag("BACK_BUTTON")) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "Go to previous page",
+                contentDescription = stringResource(R.string.go_to_previous_page),
                 modifier = Modifier.align(Alignment.CenterStart)
 
             )

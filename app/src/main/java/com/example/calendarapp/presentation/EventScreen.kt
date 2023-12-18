@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.calendarapp.domain.Event
@@ -88,17 +89,17 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                 }){
                     Icon(
                         painter = painterResource(R.drawable.baseline_arrow_back_ios_24),
-                        contentDescription = "back arrow"
+                        contentDescription = stringResource(R.string.back_arrow)
                     )
                 }
                 Button(onClick = {editable = !editable},
                     colors = if (editable) ButtonDefaults.buttonColors(Color.DarkGray) else ButtonDefaults.buttonColors())
                 {
-                    Text("Edit")
+                    Text(stringResource(R.string.edit))
                 }
                 Button(onClick = {
                     errorMessage = ""
-                    if(title.isBlank())errorMessage += "Title is mandatory. "
+                    if(title.isBlank())errorMessage += stringResource(R.string.title_is_mandatory)
                     if(endHour.isBlank())errorMessage += "End hour is mandatory. "
                     if(endMinute.isBlank())errorMessage += "End minute is mandatory"
                     val endTime = LocalDateTime.of(
