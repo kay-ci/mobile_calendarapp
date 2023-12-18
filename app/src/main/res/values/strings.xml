@@ -8,4 +8,22 @@
     <string name="back_arrow">back arrow</string>
     <string name="edit">Edit</string>
     <string name="title_is_mandatory">"Title is mandatory. "</string>
+    <string name="end_hour_is_mandatory">"End hour is mandatory. "</string>
+    <string name="end_minute_is_mandatory">End minute is mandatory</string>
+    <string name="event_cannot_end_before_it_starts">"Event cannot end before it starts. "</string>
+    <string name="selected_time_is_already_used_by_another_event">Selected time is already used by another event</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="title">"Title: "</string>
+    <string name="description">"Description: "</string>
+    <string name="location">"Location: "</string>
+    <string name="day">"Day: "</string>
+    <string name="month">"Month: "</string>
+    <string name="year">"Year: "</string>
+    <string name="teacher">"Teacher: "</string>
+    <string name="program">"Program: "</string>
+    <string name="start_hour">"Start Hour: "</string>
+    <string name="start_minute">"Start Minute: "</string>
+    <string name="end_hour">"End Hour: "</string>
+    <string name="end_minute">"End Minute: "</string>
 </resources>

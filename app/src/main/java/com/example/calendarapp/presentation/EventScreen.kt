@@ -97,11 +97,16 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                 {
                     Text(stringResource(R.string.edit))
                 }
+                val titleIsMandatory = stringResource(R.string.title_is_mandatory)
+                val endHourIsMandatory = stringResource(R.string.title_is_mandatory)
+                val endMinuteIsMandatory = stringResource(R.string.title_is_mandatory)
+                val eventCannotEndBeforeItStarts = stringResource(R.string.event_cannot_end_before_it_starts)
+                val selectedTimeIsAlreadyUsedByAnotherEvent: String = stringResource(R.string.selected_time_is_already_used_by_another_event)
                 Button(onClick = {
                     errorMessage = ""
-                    if(title.isBlank())errorMessage += stringResource(R.string.title_is_mandatory)
-                    if(endHour.isBlank())errorMessage += "End hour is mandatory. "
-                    if(endMinute.isBlank())errorMessage += "End minute is mandatory"
+                    if(title.isBlank())errorMessage += titleIsMandatory
+                    if(endHour.isBlank())errorMessage += endHourIsMandatory
+                    if(endMinute.isBlank())errorMessage += endMinuteIsMandatory
                     val endTime = LocalDateTime.of(
                         year.toInt(),
                         month.toInt(),
@@ -110,7 +115,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                         endMinute.toInt()
                     )
                     if(endTime < event.startTime){
-                        errorMessage += "Event cannot end before it starts. "
+                        errorMessage += eventCannotEndBeforeItStarts
                     }
                     val newEvent = Event(
                         event.id,
@@ -132,7 +137,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                             var startsAfter = newEvent.startTime > loopEvent.endTime
                             var endsAfter = newEvent.endTime > loopEvent.endTime
                             if(!(startsBefore && endsBefore || startsAfter || endsAfter) && counter == 0 && loopEvent.id != newEvent.id){
-                                errorMessage += "Selected time is already used by another event (${loopEvent.title}). "
+                                errorMessage += "$selectedTimeIsAlreadyUsedByAnotherEvent (${loopEvent.title})."
                                 counter++
                                 //without the counter, the errorMessage can be appended many times.
                             }
@@ -143,7 +148,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                         navController.popBackStack()
                     }
                 }){
-                    Text("Save")
+                    Text(stringResource(R.string.save))
                 }
                 Button(onClick = {
                     allEvents?.forEach {loopEvent ->
@@ -153,7 +158,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     }
                     navController.popBackStack()
                 }){
-                    Text("Delete")
+                    Text(stringResource(R.string.delete))
                 }
             }
         } }
@@ -163,7 +168,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
         item{
             Column(){
                 Text(
-                    text = "Title: ",
+                    text = stringResource(R.string.title) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -179,7 +184,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Description: ",
+                    text = stringResource(R.string.description) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -195,7 +200,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Location: ",
+                    text = stringResource(R.string.location) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -211,7 +216,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Day: ",
+                    text = stringResource(R.string.day) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -225,7 +230,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Month: ",
+                    text = stringResource(R.string.month) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -239,7 +244,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Year: ",
+                    text = stringResource(R.string.year) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -253,7 +258,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Teacher: ",
+                    text = stringResource(R.string.teacher) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -269,7 +274,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Program: ",
+                    text = stringResource(R.string.program) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -287,7 +292,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
         item{
             Column(){
                 Text(
-                    text = "Start Hour: ",
+                    text = stringResource(R.string.start_hour) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -301,7 +306,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "Start Minute: ",
+                    text = stringResource(R.string.start_minute) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -315,7 +320,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "End Hour: ",
+                    text = stringResource(R.string.end_hour) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -331,7 +336,7 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
             }
             Column(){
                 Text(
-                    text = "End Minute: ",
+                    text = stringResource(R.string.end_minute) + ": ",
                     fontSize = 40.sp
                 )
                 TextField(
