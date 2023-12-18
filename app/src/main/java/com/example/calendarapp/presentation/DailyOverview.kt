@@ -112,28 +112,53 @@ fun NavigationBar(navController: NavHostController) {
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyEventsTimeline(
     events: List<Event>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: CalendarViewModel
-){
-    val eventList = events ?: emptyList()
+) {
     val currentDay = LocalDate.parse(viewModel.selectedDate)
-    val filteredEvents = eventList.filter { event ->
+    val filteredEvents = events.filter { event ->
         event.startTime.toLocalDate() == currentDay
     }
-    Column(modifier = modifier
-        .verticalScroll(rememberScrollState())
-        .fillMaxWidth()) {
-        Row{
+    viewModel.getHolidaysForDate(currentDay)
+    val holidays by viewModel.dayHolidays.observeAsState()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+    ) {
+        Row {
             //Column for displaying the time
             Column {
+                //Display Holiday Name
+                holidays?.forEach { holiday ->
+                    Card(
+                        modifier = Modifier
+                            .padding(vertical = 2.dp, horizontal = 4.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(35.dp)
+                                .padding(5.dp)
+                        ) {
+                            Text(
+                                text = holiday.name,
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
                 //Loop over all the hours in a day to display them
-                for(hour in (0..23)){
-                    Text(text = "${hour}:00",
+                for (hour in (0..23)) {
+                    Text(
+                        text = "${hour}:00",
                         modifier = modifier
                             .padding(bottom = 10.dp, end = 10.dp)
                             .height(30.dp),
