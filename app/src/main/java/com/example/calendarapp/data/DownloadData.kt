@@ -1,17 +1,15 @@
 package com.example.calendarapp.data
 
+import android.content.Context
 import android.util.Log
-import com.example.calendarapp.domain.UtilityHelper
 import java.net.HttpURLConnection
 import java.net.URL
 
-class DownloadData (utilityHelper: UtilityHelper) {
-    //Next public holidays for the next 365 days
-    private val publicHolidaysUrl = "https://date.nager.at/api/v3/NextPublicHolidays/CA"
-    private val utilHelper = utilityHelper
+class DownloadData (context: Context) {
+    private val appContext = context
 
-    fun fetchData(tempFile: String){
-        val url = URL(publicHolidaysUrl)
+    fun fetchData(tempFile: String, url: String){
+        val url = URL(url)
         val httpURLConnection = url.openConnection() as HttpURLConnection
         httpURLConnection.requestMethod = "GET"
         httpURLConnection.setRequestProperty("Accept", "text/json")
@@ -23,7 +21,7 @@ class DownloadData (utilityHelper: UtilityHelper) {
             val dataStr = httpURLConnection.inputStream.bufferedReader().use {it.readText()}
 
             //Write data to temp file
-            TempStorage(utilHelper).writeDataToFile(dataStr, tempFile)
+            TempStorage(appContext).writeDataToFile(dataStr, tempFile)
         }else{
             Log.e("httpsURLConnection_ERROR", responseCode.toString())
         }

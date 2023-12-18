@@ -1,8 +1,5 @@
 package com.example.calendarapp.presentation
 
-import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -49,11 +45,9 @@ import java.time.format.DateTimeFormatter
 
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
 fun ViewPage(
@@ -68,7 +62,6 @@ fun ViewPage(
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(
     modifier: Modifier,
@@ -81,6 +74,7 @@ fun DailyPage(
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
     val events by viewModel.searchResults.observeAsState(listOf())
     val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
+
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
         DaySelect(modifier = modifier,dayName = dayName, viewModel)
