@@ -246,7 +246,16 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                 theColor = MaterialTheme.colorScheme.secondary
             }
         }
-
+        
+        val holidays by viewModel.allHolidays.observeAsState()
+        holidays?.forEach {holiday ->
+            val sameYear = getYear(holiday.date) == currentYear
+            val sameMonth = getMonth(holiday.date) == viewModel.getMonthNumber(currentMonth)
+            val sameDay = getDay(holiday.date).toString() == content
+            if(sameYear && sameMonth && sameDay){
+                holidayName = holiday.name
+            }
+        }
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
             theColor = MaterialTheme.colorScheme.tertiary
@@ -275,14 +284,18 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
             }
 
         ) {
+            var height = 40.dp
+            if(content.toDoubleOrNull() != null){
+                height = 55.dp
+            }
             Column(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(35.dp)
+                    .width(45.dp)
+                    .height(height)
                     .padding(2.dp)
             ) {
                 Text(
-                    text = content,
+                    text = "$content\n$holidayName",
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = MaterialTheme.typography.bodySmall
                 )
