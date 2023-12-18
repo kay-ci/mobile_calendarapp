@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,7 +30,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -236,7 +236,7 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: Calenda
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        currentDayWeather(navController, viewModel , lat, lon)
+        CurrentDayWeather(navController, viewModel , lat, lon)
         IconButton(onClick = { viewModel.setDate(LocalDate.parse(viewModel.selectedDate).plusDays(1).toString())}) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
@@ -246,30 +246,38 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: Calenda
     }
 }
 @Composable
-fun currentDayWeather(navController: NavHostController, viewModel: CalendarViewModel, lat: Double, lon: Double){
+fun CurrentDayWeather(
+    navController: NavHostController,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+){
     val weatherData by viewModel.weatherData.observeAsState()
     viewModel.fetchWeatherData(lat.toString(), lon.toString())
-
-    Row(modifier = Modifier.clickable {
-        navController.navigate(Routes.WeatherForecast.route)
-    }){
-        weatherData?.let {
-            Text(
-                text = "${it.main?.temp?.roundToInt()}°C",
-                modifier = Modifier.padding(16.dp),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
-            it.weather?.get(0)?.icon.let { iconCode ->
-                val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-                Image(
-                    painter = rememberImagePainter(iconUrl),
-                    contentDescription = "Weather Icon",
-                    modifier = Modifier
-                        .size(40.dp)
+    val dayName = viewModel.selectedDate
+    if(dayName == LocalDate.now().toString()){
+        Row(modifier = Modifier.clickable {
+            navController.navigate(Routes.WeatherForecast.route)
+        }){
+            weatherData?.let {
+                Text(
+                    text = "${it.main?.temp?.roundToInt()}°C",
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
+                it.weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
             }
         }
+
     }
 }
