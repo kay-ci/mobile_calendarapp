@@ -24,10 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.calendarapp.R
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
@@ -64,13 +66,19 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     .background(Color.Gray)
                     .fillMaxWidth()
             ){
-                Text("New Event",
+                Text(
+                                    stringResource(R.string.new_event),
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White)
+                val titleIsMandatory = stringResource(R.string.title_is_mandatory)
+                val endHourIsMandatory = stringResource(R.string.title_is_mandatory)
+                val endMinuteIsMandatory = stringResource(R.string.title_is_mandatory)
+                val eventCannotEndBeforeItStarts = stringResource(R.string.event_cannot_end_before_it_starts)
+                val selectedTimeIsAlreadyUsedByAnotherEvent: String = stringResource(R.string.selected_time_is_already_used_by_another_event)
                 Button(onClick = {
                     errorMessage = ""
-                    if(title.isBlank())errorMessage += "Title is mandatory. "
+                    if(title.isBlank())errorMessage += titleIsMandatory
                     if(startHour.isBlank())errorMessage += "Start hour is mandatory. "
                     if(startMinute.isBlank())errorMessage += "Start Minute is mandatory. "
                     if(endHour.isBlank())errorMessage += "End hour is mandatory. "

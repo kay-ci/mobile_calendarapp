@@ -36,11 +36,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.calendarapp.R
 import com.example.calendarapp.domain.Holiday
 import com.example.calendarapp.domain.getDay
 import com.example.calendarapp.domain.getMonth
@@ -103,7 +105,7 @@ fun MonthView(
                     val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
                     Image(
                         painter = rememberImagePainter(iconUrl),
-                        contentDescription = "Weather Icon",
+                        contentDescription = stringResource(R.string.weather_icon),
                         modifier = Modifier
                             .size(40.dp)
                     )
@@ -112,7 +114,10 @@ fun MonthView(
         }
 
 
-        val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val list = listOf(stringResource(R.string.sun), stringResource(R.string.mon), stringResource(
+                    R.string.tue), stringResource(R.string.wed), stringResource(R.string.thu), stringResource(
+                                R.string.fri), stringResource(R.string.sat)
+                                        )
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
         MonthContent(data = viewModel, list = viewModel.daysInMonth.value, navController)
@@ -130,7 +135,7 @@ fun MonthView(
             ) {
                 Icon(
                     imageVector = Icons.Filled.AddCircle,
-                    contentDescription = "AddEvent",
+                    contentDescription = stringResource(R.string.add_event),
                     modifier = Modifier.size(40.dp)
                 )
             }
@@ -153,7 +158,7 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.previousMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Previous Month"
+                contentDescription = stringResource(R.string.previous_month)
             )
         }
 
@@ -168,7 +173,7 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.nextMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
-                contentDescription = "Next Month"
+                contentDescription = stringResource(R.string.next_month)
             )
         }
     }

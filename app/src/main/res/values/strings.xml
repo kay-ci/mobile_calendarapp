@@ -26,4 +26,17 @@
     <string name="start_minute">"Start Minute: "</string>
     <string name="end_hour">"End Hour: "</string>
     <string name="end_minute">"End Minute: "</string>
+    <string name="location_permissions_denied">Location permissions denied</string>
+    <string name="weather_icon">Weather Icon</string>
+    <string name="sun">Sun</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="add_event">Add event</string>
+    <string name="previous_month">Previous Month</string>
+    <string name="next_month">Next Month</string>
+    <string name="new_event">New Event</string>
 </resources>

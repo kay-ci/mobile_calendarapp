@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -96,7 +97,7 @@ class MainActivity : ComponentActivity() {
             } else {
                 // Permissions denied
                 showHomeView(0.0, 0.0)
-                Toast.makeText(this, "Location permissions denied", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.location_permissions_denied), Toast.LENGTH_SHORT).show()
             }
         }
 
