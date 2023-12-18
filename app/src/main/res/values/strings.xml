@@ -4,4 +4,5 @@
     <string name="right_arrow">Right arrow</string>
     <string name="left_arrow">Left arrow</string>
     <string name="back_button">BACK_BUTTON</string>
+    <string name="forecastTitle"> Forecast of the five next days </string>
 </resources>

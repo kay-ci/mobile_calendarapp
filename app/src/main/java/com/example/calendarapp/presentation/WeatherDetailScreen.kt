@@ -15,15 +15,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import kotlin.math.roundToInt
 
 
 @Composable
 fun WeatherDetailScreen(viewModel: CalendarViewModel, lat: Double, lon: Double) {
+    val context = LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -32,7 +35,7 @@ fun WeatherDetailScreen(viewModel: CalendarViewModel, lat: Double, lon: Double) 
             modifier = Modifier.fillMaxSize(),
             horizontalArrangement = Arrangement.Center){
             Text(
-                text = "Forecast of the five next days",
+                text = context.resources.getString(R.string.forecastTitle),
                 modifier = Modifier
                     .padding(8.dp, 0.dp, 8.dp, 100.dp),
                 fontSize = 24.sp,
