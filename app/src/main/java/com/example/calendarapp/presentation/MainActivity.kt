@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.location.Geocoder;
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,6 +37,7 @@ import com.google.android.gms.tasks.OnTokenCanceledListener
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private lateinit var geocoder: Geocoder
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -66,6 +68,7 @@ class MainActivity : ComponentActivity() {
             .addOnSuccessListener { location: Location? ->
                 val lat = location?.latitude
                 val lon = location?.longitude
+
                 setContent {
                     CalendarAppTheme {
                         // A surface container using the 'background' color from the theme

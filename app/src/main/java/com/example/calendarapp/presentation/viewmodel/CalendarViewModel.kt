@@ -6,32 +6,38 @@ import android.icu.util.ULocale
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.calendarapp.data.DownloadData
 import com.example.calendarapp.data.EventRepository
 import com.example.calendarapp.data.EventRoomDatabase
+import com.example.calendarapp.data.TempStorage
 import com.example.calendarapp.data.WeatherRepository
 import com.example.calendarapp.domain.Event
+import com.example.calendarapp.domain.Holiday
 import com.example.calendarapp.domain.WeatherData
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
     fun setDate(newDate: String){
         selectedDate = newDate
     }
+    // Holds application context
+    private val appContext = application
+    // Will hold data fetched from file
+    var holidayData = mutableStateOf("")
+    private val filename = "holidayData"
 
     private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
 
@@ -53,6 +59,9 @@ class CalendarViewModel (application: Application) : ViewModel() {
     private val repository : EventRepository
     val searchResults: MutableLiveData<List<Event>>
 
+    val allHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
+    val dayHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
+
     init {
         updateMonthYear()
         updateDaysOfMonth()
@@ -63,8 +72,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
 
         allEvents = repository.allEvents
         searchResults = repository.searchResults
-
-
     }
 
     fun getMonthNumber(month: String): Int {

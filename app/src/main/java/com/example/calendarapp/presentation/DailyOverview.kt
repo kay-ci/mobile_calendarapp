@@ -147,7 +147,6 @@ fun DailyEventsTimeline(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ListEvents(events: List<Event>, navController: NavHostController) {
     //Column for the displaying the events
@@ -173,7 +172,6 @@ private fun ListEvents(events: List<Event>, navController: NavHostController) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier, navController: NavHostController) {
     Card(

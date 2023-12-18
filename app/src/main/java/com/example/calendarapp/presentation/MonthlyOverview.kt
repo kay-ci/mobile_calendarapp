@@ -1,5 +1,4 @@
 package com.example.calendarapp.presentation
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +41,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.calendarapp.domain.Holiday
+import com.example.calendarapp.domain.getDay
+import com.example.calendarapp.domain.getMonth
+import com.example.calendarapp.domain.getYear
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
+import com.google.gson.JsonArray
+import org.json.JSONArray
 import java.time.LocalDate
 import java.time.Month
 import kotlin.math.roundToInt
@@ -52,6 +65,19 @@ fun MonthView(
     lat: Double,
     lon: Double
 ) {
+    val holidayData by rememberSaveable { viewModel.holidayData }
+    // Fetch data
+    if(holidayData == "" ) {
+        viewModel.fetchHolidayData()
+        viewModel.getHolidaysFromFile()
+        viewModel.getAllHolidays()
+    }
+
+    // This uses the fetched data and it works!
+    val gson = GsonBuilder().setPrettyPrinting().create()
+    val prettyJson = gson.toJson(JsonParser().parse(holidayData))
+
+
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
@@ -108,6 +134,7 @@ fun MonthView(
                     modifier = Modifier.size(40.dp)
                 )
             }
+//            Text(text = prettyJson)
         }
 
     }
@@ -204,6 +231,7 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 @Composable
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
                 currentMonth: String, viewModel: CalendarViewModel){
+    var holidayName = ""
     if(content.isNotBlank()) {
         var theColor = MaterialTheme.colorScheme.inversePrimary
         var today = LocalDate.now()
