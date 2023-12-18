@@ -48,17 +48,12 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 @Composable
 fun MonthView(
     navController: NavHostController,
-    viewModel: CalendarViewModel,
-    lat: Double,
-    lon: Double
+    viewModel: CalendarViewModel
 ) {
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
     ) {
-
-        currentDayWeather(navController, viewModel, lat, lon)
-
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
@@ -85,40 +80,6 @@ fun MonthView(
 
     }
 }
-
-@Composable
-fun currentDayWeather(navController: NavHostController, viewModel: CalendarViewModel, lat: Double, lon: Double){
-    val weatherData by viewModel.weatherData.observeAsState()
-    viewModel.fetchWeatherData(lat.toString(), lon.toString())
-
-    Row(modifier = Modifier.clickable {
-        navController.navigate(Routes.WeatherForecast.route)
-    }){
-        weatherData?.let {
-            if (it != null) {
-                Text(
-                    text = "${it.main?.temp?.roundToInt()}°C",
-                    modifier = Modifier.padding(16.dp),
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
-            }
-            it.weather?.get(0)?.icon.let { iconCode ->
-                val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-                Image(
-                    painter = rememberImagePainter(iconUrl),
-                    contentDescription = "Weather Icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                )
-            }
-        }
-    }
-}
-
-
-
 
 // Display month, year and buttons
 @Composable

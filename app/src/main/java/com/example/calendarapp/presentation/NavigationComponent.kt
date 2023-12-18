@@ -14,14 +14,14 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
 
         // Navigation graph destinations
         composable(Routes.MonthView.route){
-            MonthView(navController, viewModel, lat, lon)
+            MonthView(navController, viewModel)
         }
         composable(Routes.WeatherForecast.route) {
             WeatherDetailScreen(viewModel, lat, lon)
         }
 
         composable(Routes.DailyView.route){
-            ViewPage(navController, viewModel)
+            ViewPage(navController, viewModel, lat, lon)
         }
         composable(Routes.EditEventView.route + "/{startTime}") { backStackEntry ->
             val startTime = backStackEntry.arguments?.getString("startTime")
