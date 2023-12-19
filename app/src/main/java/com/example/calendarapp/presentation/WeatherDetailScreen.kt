@@ -13,8 +13,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -29,15 +27,18 @@ import kotlin.math.roundToInt
 
 
 @Composable
-fun WeatherDetailScreen(viewModel: CalendarViewModel, lat: Double, lon: Double) {
+fun WeatherDetailScreen(
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
         //Display the header for the forecast
         DisplayForecastHeader()
-        val forecastWeatherData by viewModel.weatherDataForecast.observeAsState()
-        viewModel.fetchNextWeatherData(lat.toString(), lon.toString())
 
         // Rest of the content
         val nextFiveDays = viewModel.getNextFiveDays()

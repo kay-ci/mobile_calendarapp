@@ -6,10 +6,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.calendarapp.domain.Event
+import com.example.calendarapp.domain.ForecastData
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 
 @Composable
-fun NavigationComponent(navController: NavHostController, viewModel: CalendarViewModel, lat : Double, lon : Double) {
+fun NavigationComponent(
+    navController: NavHostController,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
+) {
     NavHost(navController = navController, startDestination = Routes.MonthView.route) {
 
         // Navigation graph destinations
@@ -17,11 +24,11 @@ fun NavigationComponent(navController: NavHostController, viewModel: CalendarVie
             MonthView(navController, viewModel)
         }
         composable(Routes.WeatherForecast.route) {
-            WeatherDetailScreen(viewModel, lat, lon)
+            WeatherDetailScreen(viewModel, lat, lon, forecastWeatherData)
         }
 
         composable(Routes.DailyView.route){
-            ViewPage(navController, viewModel, lat, lon)
+            ViewPage(navController, viewModel, lat, lon, forecastWeatherData)
         }
         composable(Routes.EditEventView.route + "/{startTime}") { backStackEntry ->
             val startTime = backStackEntry.arguments?.getString("startTime")
