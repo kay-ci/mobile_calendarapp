@@ -68,11 +68,11 @@ fun MonthView(
     lon: Double
 ) {
     val holidayData by rememberSaveable { viewModel.holidayData }
+
     // Fetch data
-    if(holidayData == "" ) {
+    if(holidayData == "" || viewModel.fetchedYear.value != viewModel.currentYear.value ) {
         viewModel.fetchHolidayData()
         viewModel.getHolidaysFromFile()
-        //viewModel.getAllHolidays()
     }
 
     // This uses the fetched data and it works!
@@ -139,7 +139,7 @@ fun MonthView(
                     modifier = Modifier.size(40.dp)
                 )
             }
-            Text(text = prettyJson)
+//            Text(text = prettyJson)
         }
 
     }

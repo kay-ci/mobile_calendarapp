@@ -119,8 +119,9 @@ fun DailyEventsTimeline(
     navController: NavHostController,
     viewModel: CalendarViewModel
 ) {
+    val eventList = events ?: emptyList()
     val currentDay = LocalDate.parse(viewModel.selectedDate)
-    val filteredEvents = events.filter { event ->
+    val filteredEvents = eventList.filter { event ->
         event.startTime.toLocalDate() == currentDay
     }
     viewModel.getHolidaysForDate(currentDay)
