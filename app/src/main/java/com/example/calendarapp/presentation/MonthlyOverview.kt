@@ -73,11 +73,6 @@ fun MonthView(
         viewModel.getHolidaysFromFile()
     }
 
-    // This uses the fetched data and it works!
-    val gson = GsonBuilder().setPrettyPrinting().create()
-    val prettyJson = gson.toJson(JsonParser().parse(holidayData))
-
-
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
@@ -134,7 +129,6 @@ fun MonthView(
                     modifier = Modifier.size(40.dp)
                 )
             }
-//            Text(text = prettyJson)
         }
 
     }
