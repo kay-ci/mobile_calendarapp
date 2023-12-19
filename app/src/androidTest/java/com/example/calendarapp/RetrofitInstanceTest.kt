@@ -9,6 +9,6 @@ class RetrofitInstanceTest {
     @Test
     fun testRetrofitInstance(){
         val instance: Retrofit = RetrofitInstance.retrofit
-        assert(instance.baseUrl().url().toString() == "https://api.openweathermap.org/data/2.5/")
+        assert(instance.baseUrl().toUrl().toString() == "https://api.openweathermap.org/data/2.5/")
     }
 }
