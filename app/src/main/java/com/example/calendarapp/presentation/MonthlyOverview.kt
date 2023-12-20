@@ -37,11 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.calendarapp.R
 import com.example.calendarapp.domain.Holiday
 import com.example.calendarapp.domain.getDay
 import com.example.calendarapp.domain.getMonth
@@ -113,12 +115,37 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.previousMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Previous Month"
+                contentDescription = stringResource(R.string.previous_month)
             )
         }
-
+        var month: String = data.currentMonth.value;
+        if ("January" == month) {
+            month = stringResource(R.string.january);
+        } else if ("February" == month) {
+            month = stringResource(R.string.february);
+        } else if ("March" == month) {
+            month = stringResource(R.string.march);
+        } else if ("April" == month) {
+            month = stringResource(R.string.april);
+        } else if ("May" == month) {
+            month = stringResource(R.string.may);
+        } else if ("June" == month) {
+            month = stringResource(R.string.june);
+        } else if ("July" == month) {
+            month = stringResource(R.string.july);
+        } else if ("August" == month) {
+            month = stringResource(R.string.august);
+        } else if ("September" == month) {
+            month = stringResource(R.string.september);
+        } else if ("October" == month) {
+            month = stringResource(R.string.october);
+        } else if ("November" == month) {
+            month = stringResource(R.string.november);
+        } else if ("December" == month) {
+            month = stringResource(R.string.december);
+        }
         Text(
-            text = "${data.currentMonth.value} ${data.currentYear.value}",
+            text = "$month ${data.currentYear.value}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -128,11 +155,12 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.nextMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
-                contentDescription = "Next Month"
+                contentDescription = stringResource(R.string.next_month)
             )
         }
     }
 }
+
 
 // Display the 7 weeks days
 @Composable
@@ -206,7 +234,7 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                 theColor = MaterialTheme.colorScheme.secondary
             }
         }
-        
+
         val holidays by viewModel.allHolidays.observeAsState()
         holidays?.forEach {holiday ->
             val sameYear = getYear(holiday.date) == currentYear
