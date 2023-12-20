@@ -5,6 +5,7 @@ import android.icu.util.Calendar
 import android.icu.util.ULocale
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.example.calendarapp.domain.Event
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import junit.framework.TestCase
 import org.junit.Before
@@ -14,11 +15,16 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotSame
 import junit.framework.TestCase.assertTrue
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 @RunWith(AndroidJUnit4::class)
 internal class CalendarViewModelTests {
     private lateinit var myViewModel: CalendarViewModel
+    private var event1 = Event("Test", LocalDate.now(),
+        LocalDateTime.now(),
+        LocalDateTime.now().plusHours(2),"Description","Dawson","Teacher","Computer Science")
 
     @Before
     fun setUp() {
@@ -66,21 +72,6 @@ internal class CalendarViewModelTests {
         assertTrue(currentMonth != myViewModel.currentMonth.value)
     }
     @Test
-    fun getEventsForDate() {
-    }
-
-    fun addEvent() {
-    }
-
-    fun removeEvent() {
-    }
-
-    fun updateEvent() {
-    }
-
-    fun containsEvent() {
-    }
-
     fun getWeatherData() {
     }
 
