@@ -1,8 +1,7 @@
 package com.example.calendarapp.presentation
-
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,48 +37,57 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.R
+import com.example.calendarapp.domain.ForecastData
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import kotlin.math.roundToInt
 
 
-
-@RequiresApi(Build.VERSION_CODES.O)
 val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 
 fun ViewPage(
     navController: NavHostController,
-    viewModel: CalendarViewModel
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
 ) {
     DailyPage(
         modifier = Modifier,
         navController = navController,
-        viewModel = viewModel
+        viewModel = viewModel,
+        lat = lat,
+        lon = lon,
+        forecastWeatherData
     )
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyPage(
     modifier: Modifier,
     navController: NavHostController,
-    viewModel: CalendarViewModel
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
 ){
     // Filter events based on the current date
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
     val events by viewModel.searchResults.observeAsState(listOf())
     val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
+
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
-        DaySelect(modifier = modifier,dayName = dayName, viewModel)
+        DaySelect(modifier,dayName, viewModel, lat, lon, navController, forecastWeatherData)
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
             navController.navigate(Routes.NewDayEventView.route)},
@@ -107,35 +115,61 @@ fun NavigationBar(navController: NavHostController) {
         IconButton(onClick = { navController.popBackStack() }, modifier = Modifier.testTag("BACK_BUTTON")) {
             Icon(
                 imageVector = Icons.Filled.KeyboardArrowLeft,
-                contentDescription = "Go to previous page",
+                contentDescription = stringResource(R.string.go_to_previous_page),
                 modifier = Modifier.align(Alignment.CenterStart)
 
             )
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DailyEventsTimeline(
     events: List<Event>,
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: CalendarViewModel
-){
+) {
     val eventList = events ?: emptyList()
     val currentDay = LocalDate.parse(viewModel.selectedDate)
     val filteredEvents = eventList.filter { event ->
         event.startTime.toLocalDate() == currentDay
     }
-    Column(modifier = modifier
-        .verticalScroll(rememberScrollState())
-        .fillMaxWidth()) {
-        Row{
+    viewModel.getHolidaysForDate(currentDay)
+    val holidays by viewModel.dayHolidays.observeAsState()
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth()
+    ) {
+        Row {
             //Column for displaying the time
             Column {
+                //Display Holiday Name
+                holidays?.forEach { holiday ->
+                    Card(
+                        modifier = Modifier
+                            .padding(vertical = 2.dp, horizontal = 4.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(35.dp)
+                                .padding(5.dp)
+                        ) {
+                            Text(
+                                text = holiday.name,
+                                modifier = Modifier.align(Alignment.CenterHorizontally),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
+                }
                 //Loop over all the hours in a day to display them
-                for(hour in (0..23)){
-                    Text(text = "${hour}:00",
+                for (hour in (0..23)) {
+                    Text(
+                        text = "${hour}:00",
                         modifier = modifier
                             .padding(bottom = 10.dp, end = 10.dp)
                             .height(30.dp),
@@ -149,7 +183,6 @@ fun DailyEventsTimeline(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 private fun ListEvents(events: List<Event>, navController: NavHostController) {
     //Column for the displaying the events
@@ -175,7 +208,6 @@ private fun ListEvents(events: List<Event>, navController: NavHostController) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier, navController: NavHostController) {
     Card(
@@ -205,10 +237,17 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: CalendarViewModel){
+fun DaySelect(
+    modifier: Modifier = Modifier,
+    dayName: String,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    navController: NavHostController,
+    forecastWeatherData: ForecastData?
+){
     Row(modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 12.dp),
+        .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
         IconButton(onClick = {
@@ -226,11 +265,76 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: Calenda
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
+        CurrentDayWeather(navController, viewModel , lat, lon, forecastWeatherData)
         IconButton(onClick = { viewModel.setDate(LocalDate.parse(viewModel.selectedDate).plusDays(1).toString())}) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = stringResource(R.string.right_arrow)
             )
+        }
+    }
+}
+@Composable
+fun CurrentDayWeather(
+    navController: NavHostController,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?,
+){
+    val selectedDay = viewModel.selectedDate
+    if(selectedDay == LocalDate.now().toString()){
+        val weatherData by viewModel.weatherData.observeAsState()
+        viewModel.fetchWeatherData(lat.toString(), lon.toString())
+        Row(modifier = Modifier.clickable {
+            navController.navigate(Routes.WeatherForecast.route)
+        }){
+            weatherData?.let {
+                Text(
+                    text = "${it.main?.temp?.roundToInt()}°C",
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                it.weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
+            }
+        }
+    }
+    else {
+        // Filter weather entries for the selected date
+        val filteredWeatherEntries = forecastWeatherData?.list
+            ?.filter { selectedDay == it.dt_txt?.substring(0, 10) }
+        Row(){
+            // Check if there are any entries for the selected date
+            if (!filteredWeatherEntries.isNullOrEmpty()) {
+                // Display the temperature
+                val temperature = filteredWeatherEntries[0].main?.temp
+                Text(
+                    text = "${temperature?.roundToInt()}°C",
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                // Display the weather icon for the first entry
+                filteredWeatherEntries[0].weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            }
         }
     }
 }

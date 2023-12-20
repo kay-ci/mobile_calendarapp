@@ -1,5 +1,7 @@
 package com.example.calendarapp.presentation
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,34 +28,56 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
+import com.example.calendarapp.R
+import com.example.calendarapp.domain.Holiday
+import com.example.calendarapp.domain.getDay
+import com.example.calendarapp.domain.getMonth
+import com.example.calendarapp.domain.getYear
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
+import com.google.gson.JsonArray
+import org.json.JSONArray
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
-fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
+fun MonthView(
+    navController: NavHostController,
+    viewModel: CalendarViewModel
+) {
+    val holidayData by rememberSaveable { viewModel.holidayData }
+
+    // Fetch data
+    if(holidayData == "" || viewModel.fetchedYear.value != viewModel.currentYear.value ) {
+        viewModel.fetchHolidayData()
+        viewModel.getHolidaysFromFile()
+    }
+
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
     ) {
-
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
@@ -79,7 +105,6 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
     }
 }
 
-
 // Display month, year and buttons
 @Composable
 fun Header(data: CalendarViewModel){
@@ -90,12 +115,37 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.previousMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowBack,
-                contentDescription = "Previous Month"
+                contentDescription = stringResource(R.string.previous_month)
             )
         }
-
+        var month: String = data.currentMonth.value;
+        if ("January" == month) {
+            month = stringResource(R.string.january);
+        } else if ("February" == month) {
+            month = stringResource(R.string.february);
+        } else if ("March" == month) {
+            month = stringResource(R.string.march);
+        } else if ("April" == month) {
+            month = stringResource(R.string.april);
+        } else if ("May" == month) {
+            month = stringResource(R.string.may);
+        } else if ("June" == month) {
+            month = stringResource(R.string.june);
+        } else if ("July" == month) {
+            month = stringResource(R.string.july);
+        } else if ("August" == month) {
+            month = stringResource(R.string.august);
+        } else if ("September" == month) {
+            month = stringResource(R.string.september);
+        } else if ("October" == month) {
+            month = stringResource(R.string.october);
+        } else if ("November" == month) {
+            month = stringResource(R.string.november);
+        } else if ("December" == month) {
+            month = stringResource(R.string.december);
+        }
         Text(
-            text = "${data.currentMonth.value} ${data.currentYear.value}",
+            text = "$month ${data.currentYear.value}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier
@@ -105,11 +155,12 @@ fun Header(data: CalendarViewModel){
         IconButton(onClick = { data.nextMonth() }) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
-                contentDescription = "Next Month"
+                contentDescription = stringResource(R.string.next_month)
             )
         }
     }
 }
+
 
 // Display the 7 weeks days
 @Composable
@@ -168,6 +219,7 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 @Composable
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
                 currentMonth: String, viewModel: CalendarViewModel){
+    var holidayName = ""
     if(content.isNotBlank()) {
         var theColor = MaterialTheme.colorScheme.inversePrimary
         var today = LocalDate.now()
@@ -183,6 +235,15 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
             }
         }
 
+        val holidays by viewModel.allHolidays.observeAsState()
+        holidays?.forEach {holiday ->
+            val sameYear = getYear(holiday.date) == currentYear
+            val sameMonth = getMonth(holiday.date) == viewModel.getMonthNumber(currentMonth)
+            val sameDay = getDay(holiday.date).toString() == content
+            if(sameYear && sameMonth && sameDay){
+                holidayName = holiday.name
+            }
+        }
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
             theColor = MaterialTheme.colorScheme.tertiary
@@ -211,14 +272,18 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
             }
 
         ) {
+            var height = 40.dp
+            if(content.toDoubleOrNull() != null){
+                height = 55.dp
+            }
             Column(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(35.dp)
+                    .width(45.dp)
+                    .height(height)
                     .padding(2.dp)
             ) {
                 Text(
-                    text = content,
+                    text = "$content\n$holidayName",
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = MaterialTheme.typography.bodySmall
                 )
