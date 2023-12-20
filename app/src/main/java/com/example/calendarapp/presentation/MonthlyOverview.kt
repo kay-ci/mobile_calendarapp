@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,9 +62,7 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 @Composable
 fun MonthView(
     navController: NavHostController,
-    viewModel: CalendarViewModel,
-    lat: Double,
-    lon: Double
+    viewModel: CalendarViewModel
 ) {
     val holidayData by rememberSaveable { viewModel.holidayData }
 
@@ -77,36 +76,6 @@ fun MonthView(
         .fillMaxSize()
         .background(Color.White)
     ) {
-        val weatherData by viewModel.weatherData.observeAsState()
-        // Fetch weather data when the page is loaded
-        DisposableEffect(Unit) {
-            viewModel.fetchWeatherData(lat.toString(), lon.toString())
-            onDispose {}
-        }
-        Row(){
-            weatherData?.let {
-                if (it != null) {
-                    Text(
-                        text = "${it.main?.temp?.roundToInt()}",
-                        modifier = Modifier.padding(16.dp),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                }
-                it.weather?.get(0)?.icon.let { iconCode ->
-                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-                    Image(
-                        painter = rememberImagePainter(iconUrl),
-                        contentDescription = "Weather Icon",
-                        modifier = Modifier
-                            .size(40.dp)
-                    )
-                }
-            }
-        }
-
-
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
@@ -133,9 +102,6 @@ fun MonthView(
 
     }
 }
-
-
-
 
 // Display month, year and buttons
 @Composable

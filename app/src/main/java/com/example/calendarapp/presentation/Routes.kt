@@ -6,4 +6,6 @@ sealed class Routes(val route: String){
     object EditEventView : Routes("editEventView")
     object NewMonthEventView: Routes("newMonthEventView")
     object NewDayEventView: Routes("newDayEventView")
+    object WeatherForecast : Routes("weatherDetail")
+
 }

@@ -1,5 +1,6 @@
 package com.example.calendarapp.domain
 
+
 data class WeatherData(
     val main: Main?,
     val weather: List<Weather>?
