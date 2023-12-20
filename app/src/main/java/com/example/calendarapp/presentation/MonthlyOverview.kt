@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,9 +64,7 @@ import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 @Composable
 fun MonthView(
     navController: NavHostController,
-    viewModel: CalendarViewModel,
-    lat: Double,
-    lon: Double
+    viewModel: CalendarViewModel
 ) {
     val holidayData by rememberSaveable { viewModel.holidayData }
 
@@ -75,49 +74,11 @@ fun MonthView(
         viewModel.getHolidaysFromFile()
     }
 
-    // This uses the fetched data and it works!
-    val gson = GsonBuilder().setPrettyPrinting().create()
-    val prettyJson = gson.toJson(JsonParser().parse(holidayData))
-
-
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
     ) {
-        val weatherData by viewModel.weatherData.observeAsState()
-        // Fetch weather data when the page is loaded
-        DisposableEffect(Unit) {
-            viewModel.fetchWeatherData(lat.toString(), lon.toString())
-            onDispose {}
-        }
-        Row(){
-            weatherData?.let {
-                if (it != null) {
-                    Text(
-                        text = "${it.main?.temp?.roundToInt()}",
-                        modifier = Modifier.padding(16.dp),
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
-                    )
-                }
-                it.weather?.get(0)?.icon.let { iconCode ->
-                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-                    Image(
-                        painter = rememberImagePainter(iconUrl),
-                        contentDescription = stringResource(R.string.weather_icon),
-                        modifier = Modifier
-                            .size(40.dp)
-                    )
-                }
-            }
-        }
-
-
-        val list = listOf(stringResource(R.string.sun), stringResource(R.string.mon), stringResource(
-                    R.string.tue), stringResource(R.string.wed), stringResource(R.string.thu), stringResource(
-                                R.string.fri), stringResource(R.string.sat)
-                                        )
+        val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
         MonthContent(data = viewModel, list = viewModel.daysInMonth.value, navController)
@@ -135,18 +96,14 @@ fun MonthView(
             ) {
                 Icon(
                     imageVector = Icons.Filled.AddCircle,
-                    contentDescription = stringResource(R.string.add_event),
+                    contentDescription = "AddEvent",
                     modifier = Modifier.size(40.dp)
                 )
             }
-//            Text(text = prettyJson)
         }
 
     }
 }
-
-
-
 
 // Display month, year and buttons
 @Composable
@@ -203,6 +160,7 @@ fun Header(data: CalendarViewModel){
         }
     }
 }
+
 
 // Display the 7 weeks days
 @Composable
@@ -276,7 +234,7 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                 theColor = MaterialTheme.colorScheme.secondary
             }
         }
-        
+
         val holidays by viewModel.allHolidays.observeAsState()
         holidays?.forEach {holiday ->
             val sameYear = getYear(holiday.date) == currentYear

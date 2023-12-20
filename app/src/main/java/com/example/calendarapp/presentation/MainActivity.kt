@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.location.Geocoder;
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -17,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
@@ -29,7 +30,6 @@ import com.example.calendarapp.R
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import com.example.calendarapp.ui.theme.CalendarAppTheme
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationToken
@@ -130,7 +130,9 @@ class MainActivity : ComponentActivity() {
                 )
             )
             val navController = rememberNavController()
-            NavigationComponent(navController, viewModel, lat, lon)
+            val forecastWeatherData by viewModel.weatherDataForecast.observeAsState()
+            viewModel.fetchNextWeatherData(lat.toString(), lon.toString())
+            NavigationComponent(navController, viewModel, lat, lon, forecastWeatherData)
         }
 
 
