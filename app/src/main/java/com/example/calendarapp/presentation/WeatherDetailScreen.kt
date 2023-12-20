@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.example.calendarapp.R
 import com.example.calendarapp.domain.ForecastData
@@ -31,22 +35,25 @@ fun WeatherDetailScreen(
     viewModel: CalendarViewModel,
     lat: Double,
     lon: Double,
-    forecastWeatherData: ForecastData?
+    forecastWeatherData: ForecastData?,
+    navController: NavHostController
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
+        NavigationBar(navController)
         //Display the header for the forecast
         DisplayForecastHeader()
-
         // Rest of the content
         val nextFiveDays = viewModel.getNextFiveDays()
         Column(
             modifier = Modifier
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
-        ) {
+        )
+        {
+            Spacer(modifier = Modifier.size(16.dp))
             FiveDaysForecast(nextFiveDays, forecastWeatherData, viewModel)
         }
     }
@@ -55,7 +62,7 @@ fun WeatherDetailScreen(
 @Composable
 fun DisplayForecastHeader(){
     Row(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center){
         val context = LocalContext.current
         Text(

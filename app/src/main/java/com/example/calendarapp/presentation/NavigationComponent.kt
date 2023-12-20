@@ -24,7 +24,7 @@ fun NavigationComponent(
             MonthView(navController, viewModel)
         }
         composable(Routes.WeatherForecast.route) {
-            WeatherDetailScreen(viewModel, lat, lon, forecastWeatherData)
+            WeatherDetailScreen(viewModel, lat, lon, forecastWeatherData, navController)
         }
 
         composable(Routes.DailyView.route){
