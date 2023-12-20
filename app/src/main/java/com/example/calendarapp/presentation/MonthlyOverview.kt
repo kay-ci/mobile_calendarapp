@@ -161,9 +161,34 @@ fun Header(data: CalendarViewModel){
                 contentDescription = stringResource(R.string.previous_month)
             )
         }
-
+        var month: String = data.currentMonth.value;
+        if ("January" == month) {
+            month = stringResource(R.string.january);
+        } else if ("February" == month) {
+            month = stringResource(R.string.february);
+        } else if ("March" == month) {
+            month = stringResource(R.string.march);
+        } else if ("April" == month) {
+            month = stringResource(R.string.april);
+        } else if ("May" == month) {
+            month = stringResource(R.string.may);
+        } else if ("June" == month) {
+            month = stringResource(R.string.june);
+        } else if ("July" == month) {
+            month = stringResource(R.string.july);
+        } else if ("August" == month) {
+            month = stringResource(R.string.august);
+        } else if ("September" == month) {
+            month = stringResource(R.string.september);
+        } else if ("October" == month) {
+            month = stringResource(R.string.october);
+        } else if ("November" == month) {
+            month = stringResource(R.string.november);
+        } else if ("December" == month) {
+            month = stringResource(R.string.december);
+        }
         Text(
-            text = "${data.currentMonth.value} ${data.currentYear.value}",
+            text = "$month ${data.currentYear.value}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier

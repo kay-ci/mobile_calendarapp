@@ -9,9 +9,9 @@
     <string name="edit">Edit</string>
     <string name="title_is_mandatory">"Title is mandatory. "</string>
     <string name="end_hour_is_mandatory">"End hour is mandatory. "</string>
-    <string name="end_minute_is_mandatory">End minute is mandatory</string>
+    <string name="end_minute_is_mandatory">End minute is mandatory. </string>
     <string name="event_cannot_end_before_it_starts">"Event cannot end before it starts. "</string>
-    <string name="selected_time_is_already_used_by_another_event">Selected time is already used by another event</string>
+    <string name="selected_time_is_already_used_by_another_event">Selected time is already used by another event. </string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
     <string name="title">"Title"</string>
@@ -43,4 +43,16 @@
     <string name="start_minute_is_mandatory">"Start Minute is mandatory. "</string>
     <string name="day_is_mandatory">"Day is mandatory. "</string>
     <string name="time_information_not_in_expected_format_includes_day_field">"Time information not in expected format (includes day field). "</string>
+    <string name="january">January</string>
+    <string name="february">February</string>
+    <string name="march">March</string>
+    <string name="april">April</string>
+    <string name="may">May</string>
+    <string name="june">June</string>
+    <string name="july">July</string>
+    <string name="august">August</string>
+    <string name="september">September</string>
+    <string name="october">October</string>
+    <string name="november">November</string>
+    <string name="december">December</string>
 </resources>

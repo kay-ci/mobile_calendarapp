@@ -73,9 +73,9 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     color = Color.White)
                 val titleIsMandatory = stringResource(R.string.title_is_mandatory)
                 val startHourIsMandatory = stringResource(R.string.start_hour_is_mandatory)
-                val startminuteIsmandatory = stringResource(R.string.start_minute_is_mandatory)
-                val endHourIsMandatory = stringResource(R.string.title_is_mandatory)
-                val endMinuteIsMandatory = stringResource(R.string.title_is_mandatory)
+                val startMinuteIsMandatory = stringResource(R.string.start_minute_is_mandatory)
+                val endHourIsMandatory = stringResource(R.string.end_hour_is_mandatory)
+                val endMinuteIsMandatory = stringResource(R.string.end_minute_is_mandatory)
                 val dayIsMandatory = stringResource(R.string.day_is_mandatory)
                 val eventCannotEndBeforeItStarts = stringResource(R.string.event_cannot_end_before_it_starts)
                 val selectedTimeIsAlreadyUsedByAnotherEvent: String = stringResource(R.string.selected_time_is_already_used_by_another_event)
@@ -84,7 +84,7 @@ fun NewMonthEventScreen(navController: NavHostController, viewModel: CalendarVie
                     errorMessage = ""
                     if(title.isBlank())errorMessage += titleIsMandatory
                     if(startHour.isBlank())errorMessage += startHourIsMandatory
-                    if(startMinute.isBlank())errorMessage += startminuteIsmandatory
+                    if(startMinute.isBlank())errorMessage += startMinuteIsMandatory
                     if(endHour.isBlank())errorMessage += endHourIsMandatory
                     if(endMinute.isBlank())errorMessage += endMinuteIsMandatory
                     if(day.isBlank())errorMessage += dayIsMandatory
@@ -301,19 +301,27 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                     fontSize = 40.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White)
+                val titleIsMandatory = stringResource(R.string.title_is_mandatory)
+                val startHourIsMandatory = stringResource(R.string.start_hour_is_mandatory)
+                val startMinuteIsMandatory = stringResource(R.string.start_minute_is_mandatory)
+                val endHourIsMandatory = stringResource(R.string.end_hour_is_mandatory)
+                val endMinuteIsMandatory = stringResource(R.string.end_minute_is_mandatory)
+                val eventCannotEndBeforeItStarts = stringResource(R.string.event_cannot_end_before_it_starts)
+                val selectedTimeIsAlreadyUsedByAnotherEvent: String = stringResource(R.string.selected_time_is_already_used_by_another_event)
+                val wrongTimeFormat = stringResource(R.string.time_information_not_in_expected_format_includes_day_field)
                 Button(onClick = {
                     errorMessage = ""
-                    if(title.isBlank())errorMessage += "Title is mandatory. "
-                    if(startHour.isBlank())errorMessage += "Start hour is mandatory. "
-                    if(startMinute.isBlank())errorMessage += "Start Minute is mandatory. "
-                    if(endHour.isBlank())errorMessage += "End hour is mandatory. "
-                    if(endMinute.isBlank())errorMessage += "End minute is mandatory. "
+                    if(title.isBlank())errorMessage += titleIsMandatory
+                    if(startHour.isBlank())errorMessage += startHourIsMandatory
+                    if(startMinute.isBlank())errorMessage += startMinuteIsMandatory
+                    if(endHour.isBlank())errorMessage += endHourIsMandatory
+                    if(endMinute.isBlank())errorMessage += endMinuteIsMandatory
                     try{
                         var date = LocalDate.parse(viewModel.selectedDate)
                         val start = LocalDateTime.of(date.year, date.month, date.dayOfMonth, startHour.toInt(), startMinute.toInt())
                         val end = LocalDateTime.of(date.year, date.month, date.dayOfMonth, endHour.toInt(), endMinute.toInt())
                         if(end <= start){
-                            errorMessage += "Event cannot end before it starts. "
+                            errorMessage += eventCannotEndBeforeItStarts
                         }
                         val newEvent = Event(title = title, date = date, startTime = start, endTime = end, description = description, location = location, teacher, program)
                         var counter = 0
@@ -325,7 +333,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                                 var startsAfter = start > loopEvent.endTime
                                 var endsAfter = end > loopEvent.endTime
                                 if(!(startsBefore && endsBefore || startsAfter && endsAfter) && counter == 0){
-                                    errorMessage += "Selected time is already used by another event (${loopEvent.title}). "
+                                    errorMessage += selectedTimeIsAlreadyUsedByAnotherEvent + " (${loopEvent.title}). "
                                     counter++
                                     //without the counter, the errorMessage can be appended many times.
                                 }
@@ -337,10 +345,10 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
                         }
                     }
                     catch(e: Exception) {
-                        errorMessage += "Time information not in expected format (includes day field). "
+                        errorMessage += wrongTimeFormat
                     }
                 }, modifier = Modifier.padding(5.dp).testTag("save_event")){
-                    Text("save")
+                    Text(stringResource(R.string.save))
                 }
             }
         }
@@ -351,7 +359,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
         item(){
             Column(){
                 Text(
-                    text = "Title: ",
+                    text = stringResource(R.string.title)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -364,7 +372,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
             Column(){
                 Text(
-                    text = "description: ",
+                    text = stringResource(R.string.description)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -377,7 +385,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
             Column(){
                 Text(
-                    text = "location: ",
+                    text = stringResource(R.string.location)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -391,7 +399,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
 
             Column(){
                 Text(
-                    text = "teacher: ",
+                    text = stringResource(R.string.teacher)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -403,7 +411,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
             Column(){
                 Text(
-                    text = "program: ",
+                    text = stringResource(R.string.program)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -418,7 +426,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
         item(){
             Column(){
                 Text(
-                    text = "start hour: ",
+                    text = stringResource(R.string.start_hour)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -431,7 +439,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
             Column(){
                 Text(
-                    text = "start minute: ",
+                    text = stringResource(R.string.start_minute)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -446,7 +454,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
         item(){
             Column(){
                 Text(
-                    text = "end hour: ",
+                    text = stringResource(R.string.end_hour)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
@@ -459,7 +467,7 @@ fun NewDayEventScreen(navController: NavHostController, viewModel: CalendarViewM
             }
             Column(){
                 Text(
-                    text = "end minute: ",
+                    text = stringResource(R.string.end_minute)+": ",
                     fontSize = 40.sp
                 )
                 TextField(
