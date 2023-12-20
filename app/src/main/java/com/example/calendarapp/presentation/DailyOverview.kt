@@ -1,8 +1,11 @@
 package com.example.calendarapp.presentation
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,13 +41,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.R
+import com.example.calendarapp.domain.ForecastData
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
+import kotlin.math.roundToInt
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -56,12 +61,18 @@ val EventFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 
 fun ViewPage(
     navController: NavHostController,
-    viewModel: CalendarViewModel
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
 ) {
     DailyPage(
         modifier = Modifier,
         navController = navController,
-        viewModel = viewModel
+        viewModel = viewModel,
+        lat = lat,
+        lon = lon,
+        forecastWeatherData
     )
 }
 
@@ -71,7 +82,10 @@ fun ViewPage(
 fun DailyPage(
     modifier: Modifier,
     navController: NavHostController,
-    viewModel: CalendarViewModel
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?
 ){
     // Filter events based on the current date
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
@@ -79,7 +93,7 @@ fun DailyPage(
     val dayName = LocalDate.parse(viewModel.selectedDate).format(DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy"))
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
-        DaySelect(modifier = modifier,dayName = dayName, viewModel)
+        DaySelect(modifier,dayName, viewModel, lat, lon, navController, forecastWeatherData)
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
             navController.navigate(Routes.NewDayEventView.route)},
@@ -205,10 +219,17 @@ fun EventSpace(event: Event, eventLength: Double, modifier: Modifier = Modifier,
 }
 
 @Composable
-fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: CalendarViewModel){
+fun DaySelect(
+    modifier: Modifier = Modifier,
+    dayName: String,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    navController: NavHostController,
+    forecastWeatherData: ForecastData?
+){
     Row(modifier = modifier
-        .fillMaxWidth()
-        .padding(horizontal = 12.dp),
+        .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween){
         IconButton(onClick = {
@@ -226,11 +247,76 @@ fun DaySelect(modifier: Modifier = Modifier, dayName: String, viewModel: Calenda
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
+        CurrentDayWeather(navController, viewModel , lat, lon, forecastWeatherData)
         IconButton(onClick = { viewModel.setDate(LocalDate.parse(viewModel.selectedDate).plusDays(1).toString())}) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
                 contentDescription = stringResource(R.string.right_arrow)
             )
+        }
+    }
+}
+@Composable
+fun CurrentDayWeather(
+    navController: NavHostController,
+    viewModel: CalendarViewModel,
+    lat: Double,
+    lon: Double,
+    forecastWeatherData: ForecastData?,
+){
+    val selectedDay = viewModel.selectedDate
+    if(selectedDay == LocalDate.now().toString()){
+        val weatherData by viewModel.weatherData.observeAsState()
+        viewModel.fetchWeatherData(lat.toString(), lon.toString())
+        Row(modifier = Modifier.clickable {
+            navController.navigate(Routes.WeatherForecast.route)
+        }){
+            weatherData?.let {
+                Text(
+                    text = "${it.main?.temp?.roundToInt()}°C",
+                    modifier = Modifier.padding(16.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                it.weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier
+                            .size(40.dp)
+                    )
+                }
+            }
+        }
+    }
+    else {
+        // Filter weather entries for the selected date
+        val filteredWeatherEntries = forecastWeatherData?.list
+            ?.filter { selectedDay == it.dt_txt?.substring(0, 10) }
+        Row(){
+            // Check if there are any entries for the selected date
+            if (!filteredWeatherEntries.isNullOrEmpty()) {
+                // Display the temperature
+                val temperature = filteredWeatherEntries[0].main?.temp
+                Text(
+                    text = "${temperature?.roundToInt()}°C",
+                    modifier = Modifier.padding(8.dp),
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+                // Display the weather icon for the first entry
+                filteredWeatherEntries[0].weather?.get(0)?.icon.let { iconCode ->
+                    val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+                    Image(
+                        painter = rememberImagePainter(iconUrl),
+                        contentDescription = "Weather Icon",
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+            }
         }
     }
 }

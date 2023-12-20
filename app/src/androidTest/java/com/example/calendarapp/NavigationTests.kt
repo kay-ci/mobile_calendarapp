@@ -3,7 +3,6 @@ package com.example.calendarapp
 import androidx.activity.compose.setContent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -21,10 +20,7 @@ import org.junit.runner.RunWith
 import com.example.calendarapp.presentation.NavigationComponent
 import com.example.calendarapp.presentation.Routes
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
-import org.junit.Assert
 import org.junit.Test
-import java.time.LocalDate
-import java.time.Month
 
 
 @RunWith(AndroidJUnit4::class)
@@ -49,7 +45,7 @@ class NavigationTests {
             }
             testViewModel = hiltViewModel()
 
-            NavigationComponent(navController = navController, viewModel = testViewModel)
+            NavigationComponent(navController = navController, viewModel = testViewModel,0.0,0.0, null)
         }
     }
 

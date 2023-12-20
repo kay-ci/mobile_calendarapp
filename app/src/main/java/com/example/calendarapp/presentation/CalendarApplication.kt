@@ -1,6 +1,7 @@
 package com.example.calendarapp.presentation
 import android.app.Application
 import android.util.Log
+import coil.Coil
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp

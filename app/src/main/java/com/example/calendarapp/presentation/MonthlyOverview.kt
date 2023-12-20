@@ -1,5 +1,7 @@
 package com.example.calendarapp.presentation
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -31,27 +34,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberImagePainter
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.LocalDate
 import java.time.Month
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import kotlin.math.roundToInt
 import androidx.compose.foundation.layout.PaddingValues as PaddingValues1
 
 
 @Composable
-fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
+fun MonthView(
+    navController: NavHostController,
+    viewModel: CalendarViewModel
+) {
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
     ) {
-
         val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
@@ -78,7 +80,6 @@ fun MonthView(navController: NavHostController, viewModel: CalendarViewModel) {
 
     }
 }
-
 
 // Display month, year and buttons
 @Composable
