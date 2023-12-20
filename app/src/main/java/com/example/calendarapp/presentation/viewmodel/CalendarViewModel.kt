@@ -6,6 +6,7 @@ import android.icu.util.ULocale
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
@@ -35,38 +36,31 @@ import java.util.Locale
 
 class CalendarViewModel (application: Application) : ViewModel() {
     var selectedDate by mutableStateOf("")
-    fun setDate(newDate: String){
-        selectedDate = newDate
-    }
-    val fetchedYear = mutableStateOf(0)
-    // Holds application context
-    private val appContext = application
-    // Will hold data fetched from file
-    var holidayData = mutableStateOf("")
+    val fetchedYear = mutableIntStateOf(0)
+    private val appContext = application // Holds application context
+    var holidayData = mutableStateOf("") // Will hold data fetched from file
     private val filename = "holidayData"
-
     private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
-
-    private val _currentDay = mutableStateOf(0)
+    private val _currentDay = mutableIntStateOf(0)
     val currentDay: MutableState<Int> = _currentDay
-
     private val _currentMonth = mutableStateOf("")
     val currentMonth: MutableState<String> = _currentMonth
-
-    private val _currentYear = mutableStateOf(0)
+    private val _currentYear = mutableIntStateOf(0)
     val currentYear: MutableState<Int> = _currentYear
-
     private val _daysInMonth = mutableStateOf<List<String>>(emptyList())
     val daysInMonth : MutableState<List<String>> = _daysInMonth
-
-    private val _firstWeekDay = mutableStateOf<Int>(Calendar.SUNDAY)
+    private val _firstWeekDay = mutableIntStateOf(Calendar.SUNDAY)
     val firstWeekDay : MutableState<Int> = _firstWeekDay
     val allEvents : LiveData<List<Event>>
     private val repository : EventRepository
     val searchResults: MutableLiveData<List<Event>>
-
     val allHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
     val dayHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
+    private val weatherRepository = WeatherRepository()
+    private val _weatherData = MutableLiveData<WeatherData>()
+    val weatherData: LiveData<WeatherData> get() = _weatherData
+    private val _weatherDataForecast = MutableLiveData<ForecastData>()
+    val weatherDataForecast: LiveData<ForecastData> get() = _weatherDataForecast
 
     init {
         updateMonthYear()
@@ -79,7 +73,9 @@ class CalendarViewModel (application: Application) : ViewModel() {
         allEvents = repository.allEvents
         searchResults = repository.searchResults
     }
-
+    fun setDate(newDate: String){
+        selectedDate = newDate
+    }
     fun getMonthNumber(month: String): Int {
         return when (month) {
             "January" -> 1
@@ -177,8 +173,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
     fun updateEvent(updatedEvent: Event) {
         repository.updateEvent(updatedEvent)
     }
-
-
     fun containsEvent(theEvent: Event): Boolean {
         var output: Boolean = false
         allEvents.value?.forEach { event ->
@@ -189,14 +183,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
         return output
     }
 
-    private val weatherRepository = WeatherRepository()
-
-    private val _weatherData = MutableLiveData<WeatherData>()
-    val weatherData: LiveData<WeatherData> get() = _weatherData
-
-    private val _weatherDataForecast = MutableLiveData<ForecastData>()
-
-    val weatherDataForecast: LiveData<ForecastData> get() = _weatherDataForecast
 
     fun fetchWeatherData(latitude: String, longitude: String) {
         weatherRepository.getCurrentWeatherData(latitude, longitude)
