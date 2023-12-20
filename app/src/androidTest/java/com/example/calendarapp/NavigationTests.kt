@@ -45,6 +45,7 @@ class NavigationTests {
             }
             testViewModel = hiltViewModel()
 
+
             NavigationComponent(navController = navController, viewModel = testViewModel,0.0,0.0, null)
         }
     }

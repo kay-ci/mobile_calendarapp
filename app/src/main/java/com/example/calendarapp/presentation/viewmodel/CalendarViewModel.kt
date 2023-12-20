@@ -6,28 +6,29 @@ import android.icu.util.ULocale
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.calendarapp.data.DownloadData
 import com.example.calendarapp.data.EventRepository
 import com.example.calendarapp.data.EventRoomDatabase
+import com.example.calendarapp.data.TempStorage
 import com.example.calendarapp.data.WeatherRepository
 import com.example.calendarapp.domain.Event
+import com.example.calendarapp.domain.Holiday
 import com.example.calendarapp.domain.ForecastData
 import com.example.calendarapp.domain.WeatherData
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
@@ -37,6 +38,12 @@ class CalendarViewModel (application: Application) : ViewModel() {
     fun setDate(newDate: String){
         selectedDate = newDate
     }
+    val fetchedYear = mutableStateOf(0)
+    // Holds application context
+    private val appContext = application
+    // Will hold data fetched from file
+    var holidayData = mutableStateOf("")
+    private val filename = "holidayData"
 
     private val calendar: Calendar = Calendar.getInstance(ULocale("en_US@calendar=gregorian"))
 
@@ -58,6 +65,9 @@ class CalendarViewModel (application: Application) : ViewModel() {
     private val repository : EventRepository
     val searchResults: MutableLiveData<List<Event>>
 
+    val allHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
+    val dayHolidays: MutableLiveData<List<Holiday>> = MutableLiveData()
+
     init {
         updateMonthYear()
         updateDaysOfMonth()
@@ -68,8 +78,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
 
         allEvents = repository.allEvents
         searchResults = repository.searchResults
-
-
     }
 
     fun getMonthNumber(month: String): Int {
@@ -254,4 +262,54 @@ class CalendarViewModel (application: Application) : ViewModel() {
         return dayOfWeekFormat.format(date)
     }
 
+    fun fetchHolidayData(){
+        //Create a coroutine to fetch the data
+
+        viewModelScope.launch ( Dispatchers.IO ){
+            val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/ca"
+            fetchedYear.value = currentYear.value
+            DownloadData(context = appContext).fetchData(filename, urlString)
+        }
+    }
+
+    fun getHolidaysFromFile() {
+        /*Fetch the data asynchronously via a coroutine. It needs to run on the
+        Main thread, since the data is required by the Main thread.
+         */
+        viewModelScope.launch(Dispatchers.Main) {
+            val fileData = TempStorage(appContext).readDataFromFile(filename)
+            holidayData.value = fileData
+            println("Raw JSON String Data: $fileData")
+            getAllHolidays()
+        }
+    }
+    private fun getAllHolidays() {
+        // Uses json fetched from file to put all objects into a list
+
+        val jsonString = holidayData.value
+        // Convert the JSON array string to a JSONArray
+        val jsonArray = JSONArray(jsonString)
+
+        // List to hold the holidays
+        val holidayList = mutableListOf<Holiday>()
+
+        for(i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val name = jsonObject.getString("localName")
+            val date = jsonObject.getString("date")
+
+            holidayList.add(Holiday(date, name))
+        }
+        allHolidays.value = holidayList
+    }
+    fun getHolidaysForDate(date: LocalDate){
+        // Get all holidays for a specific date
+
+        val matchingHolidays = allHolidays.value?.filter { LocalDate.parse(it.date) == date }
+        if (!matchingHolidays.isNullOrEmpty()){
+            dayHolidays.value = matchingHolidays
+        }else{
+            dayHolidays.value = emptyList()
+        }
+    }
 }

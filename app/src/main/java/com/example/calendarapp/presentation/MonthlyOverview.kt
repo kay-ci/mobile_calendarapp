@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,6 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +42,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
+import com.example.calendarapp.domain.Holiday
+import com.example.calendarapp.domain.getDay
+import com.example.calendarapp.domain.getMonth
+import com.example.calendarapp.domain.getYear
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.reflect.TypeToken
+import com.google.gson.JsonArray
+import org.json.JSONArray
 import java.time.LocalDate
 import java.time.Month
 import kotlin.math.roundToInt
@@ -50,6 +64,14 @@ fun MonthView(
     navController: NavHostController,
     viewModel: CalendarViewModel
 ) {
+    val holidayData by rememberSaveable { viewModel.holidayData }
+
+    // Fetch data
+    if(holidayData == "" || viewModel.fetchedYear.value != viewModel.currentYear.value ) {
+        viewModel.fetchHolidayData()
+        viewModel.getHolidaysFromFile()
+    }
+
     Column (modifier = Modifier
         .fillMaxSize()
         .background(Color.White)
@@ -169,6 +191,7 @@ fun MonthContent(data: CalendarViewModel, list: List<String>, navController: Nav
 @Composable
 fun ContentItem(content: String, navController: NavHostController, currentYear: Int,
                 currentMonth: String, viewModel: CalendarViewModel){
+    var holidayName = ""
     if(content.isNotBlank()) {
         var theColor = MaterialTheme.colorScheme.inversePrimary
         var today = LocalDate.now()
@@ -183,7 +206,16 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
                 theColor = MaterialTheme.colorScheme.secondary
             }
         }
-
+        
+        val holidays by viewModel.allHolidays.observeAsState()
+        holidays?.forEach {holiday ->
+            val sameYear = getYear(holiday.date) == currentYear
+            val sameMonth = getMonth(holiday.date) == viewModel.getMonthNumber(currentMonth)
+            val sameDay = getDay(holiday.date).toString() == content
+            if(sameYear && sameMonth && sameDay){
+                holidayName = holiday.name
+            }
+        }
         //current day has to be differently coloured
         if(today.year == currentYear && today.month.toString() == currentMonth.uppercase() && today.dayOfMonth.toString() == content){
             theColor = MaterialTheme.colorScheme.tertiary
@@ -212,14 +244,18 @@ fun ContentItem(content: String, navController: NavHostController, currentYear: 
             }
 
         ) {
+            var height = 40.dp
+            if(content.toDoubleOrNull() != null){
+                height = 55.dp
+            }
             Column(
                 modifier = Modifier
-                    .width(40.dp)
-                    .height(35.dp)
+                    .width(45.dp)
+                    .height(height)
                     .padding(2.dp)
             ) {
                 Text(
-                    text = content,
+                    text = "$content\n$holidayName",
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = MaterialTheme.typography.bodySmall
                 )
