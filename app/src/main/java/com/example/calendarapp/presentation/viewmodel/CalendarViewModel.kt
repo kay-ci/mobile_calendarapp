@@ -250,7 +250,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
 
     fun fetchHolidayData(){
         //Create a coroutine to fetch the data
-
         viewModelScope.launch ( Dispatchers.IO ){
             val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/ca"
             fetchedYear.value = currentYear.value
