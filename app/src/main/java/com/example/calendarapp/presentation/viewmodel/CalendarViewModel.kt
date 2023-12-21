@@ -31,6 +31,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
@@ -191,7 +192,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
                 override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
                     if (response.isSuccessful) {
                         viewModelScope.launch(Dispatchers.Main) {
-                            Log.d("currentDay",response.body().toString())
                             _weatherData.value = response.body()!!
                         }
                     } else {
@@ -212,7 +212,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
                 override fun onResponse(call: Call<ForecastData>, response: Response<ForecastData>) {
                     if (response.isSuccessful) {
                         viewModelScope.launch(Dispatchers.Main) {
-                            Log.d("test",response.body().toString())
                             _weatherDataForecast.value = response.body()!!
                         }
                     } else {

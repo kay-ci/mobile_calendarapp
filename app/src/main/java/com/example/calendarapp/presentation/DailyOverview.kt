@@ -41,9 +41,11 @@ import coil.compose.rememberImagePainter
 import com.example.calendarapp.domain.Event
 import com.example.calendarapp.R
 import com.example.calendarapp.domain.ForecastData
+import com.example.calendarapp.domain.WeatherData
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
@@ -58,7 +60,9 @@ fun ViewPage(
     viewModel: CalendarViewModel,
     lat: Double,
     lon: Double,
-    forecastWeatherData: ForecastData?
+    forecastWeatherData: ForecastData?,
+    weatherData: WeatherData?,
+    lastUpdateTime: LocalDateTime
 ) {
     DailyPage(
         modifier = Modifier,
@@ -66,7 +70,9 @@ fun ViewPage(
         viewModel = viewModel,
         lat = lat,
         lon = lon,
-        forecastWeatherData
+        forecastWeatherData,
+        weatherData,
+        lastUpdateTime
     )
 }
 
@@ -78,7 +84,9 @@ fun DailyPage(
     viewModel: CalendarViewModel,
     lat: Double,
     lon: Double,
-    forecastWeatherData: ForecastData?
+    forecastWeatherData: ForecastData?,
+    weatherData: WeatherData?,
+    lastUpdateTime: LocalDateTime
 ){
     // Filter events based on the current date
     viewModel.getEventsForDate(LocalDate.parse(viewModel.selectedDate))
@@ -87,7 +95,7 @@ fun DailyPage(
 
     Column(modifier = Modifier.background(Color.White)){
         NavigationBar(navController)
-        DaySelect(modifier,dayName, viewModel, lat, lon, navController, forecastWeatherData)
+        DaySelect(modifier,dayName, viewModel, lat, lon, navController, forecastWeatherData, weatherData, lastUpdateTime)
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
             navController.navigate(Routes.NewDayEventView.route)},
@@ -244,7 +252,9 @@ fun DaySelect(
     lat: Double,
     lon: Double,
     navController: NavHostController,
-    forecastWeatherData: ForecastData?
+    forecastWeatherData: ForecastData?,
+    weatherData: WeatherData?,
+    lastUpdateTime: LocalDateTime
 ){
     Row(modifier = modifier
         .fillMaxWidth(),
@@ -265,7 +275,7 @@ fun DaySelect(
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        CurrentDayWeather(navController, viewModel , lat, lon, forecastWeatherData)
+        CurrentDayWeather(navController, viewModel , lat, lon, forecastWeatherData, weatherData, lastUpdateTime)
         IconButton(onClick = { viewModel.setDate(LocalDate.parse(viewModel.selectedDate).plusDays(1).toString())}) {
             Icon(
                 imageVector = Icons.Filled.ArrowForward,
@@ -281,14 +291,19 @@ fun CurrentDayWeather(
     lat: Double,
     lon: Double,
     forecastWeatherData: ForecastData?,
+    weatherData: WeatherData?,
+    lastUpdateTime: LocalDateTime
 ){
     val selectedDay = viewModel.selectedDate
     if(selectedDay == LocalDate.now().toString()){
-        val weatherData by viewModel.weatherData.observeAsState()
-        viewModel.fetchWeatherData(lat.toString(), lon.toString())
-        Row(modifier = Modifier.clickable {
+        Box (modifier = Modifier.clickable {
             navController.navigate(Routes.WeatherForecast.route)
         }){
+            Text(
+                text = "${lastUpdateTime.format(DateTimeFormatter.ofPattern("MM-dd HH:mm:ss"))}",
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
             weatherData?.let {
                 Text(
                     text = "${it.main?.temp?.roundToInt()}°C",
