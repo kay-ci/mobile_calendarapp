@@ -90,7 +90,7 @@ fun DailyPage(
         DaySelect(modifier,dayName, viewModel, lat, lon, navController, forecastWeatherData)
         Spacer(modifier = Modifier.height(10.dp))
         IconButton(onClick = {
-            navController.navigate(Routes.NewDayEventView.route)},
+            navController.navigate(Routes.NewEventView.route+"/day")},
             modifier = Modifier
                 .align(Alignment.End)
                 .testTag("ADD_EVENT_BUTTON")

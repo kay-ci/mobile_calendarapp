@@ -1,8 +1,10 @@
 package com.example.calendarapp.presentation.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.icu.util.Calendar
 import android.icu.util.ULocale
+import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -250,9 +252,12 @@ class CalendarViewModel (application: Application) : ViewModel() {
     }
 
     fun fetchHolidayData(){
+        val telephonyManager = appContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+
+        val countryCode = telephonyManager?.simCountryIso
         //Create a coroutine to fetch the data
         viewModelScope.launch ( Dispatchers.IO ){
-            val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/ca"
+            val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/$countryCode"
             fetchedYear.value = currentYear.value
             DownloadData(context = appContext).fetchData(filename, urlString)
         }

@@ -78,7 +78,13 @@ fun MonthView(
         .fillMaxSize()
         .background(Color.White)
     ) {
-        val list = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+        val list = listOf(stringResource(R.string.sun),
+            stringResource(R.string.mon),
+            stringResource(R.string.tue),
+            stringResource(R.string.wed),
+            stringResource(R.string.thu),
+            stringResource(R.string.fri),
+            stringResource(R.string.sat))
         Header(data = viewModel)
         WeekDaysHeader(list = list, navController, viewModel)
         MonthContent(data = viewModel, list = viewModel.daysInMonth.value, navController)
@@ -89,7 +95,7 @@ fun MonthView(
             contentAlignment = Alignment.BottomEnd
         ){
             IconButton(onClick = {
-                navController.navigate(Routes.NewMonthEventView.route + "/${viewModel.currentMonth.value}") },
+                navController.navigate(Routes.NewEventView.route + "/month") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("create_event_view")
