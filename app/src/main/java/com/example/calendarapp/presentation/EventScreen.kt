@@ -98,13 +98,17 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     Text(stringResource(R.string.edit))
                 }
                 val titleIsMandatory = stringResource(R.string.title_is_mandatory)
-                val endHourIsMandatory = stringResource(R.string.title_is_mandatory)
-                val endMinuteIsMandatory = stringResource(R.string.title_is_mandatory)
+                val startHourIsMandatory = stringResource(R.string.start_hour_is_mandatory)
+                val startMinuteIsMandatory = stringResource(R.string.start_minute_is_mandatory)
+                val endHourIsMandatory = stringResource(R.string.end_hour_is_mandatory)
+                val endMinuteIsMandatory = stringResource(R.string.end_minute_is_mandatory)
                 val eventCannotEndBeforeItStarts = stringResource(R.string.event_cannot_end_before_it_starts)
                 val selectedTimeIsAlreadyUsedByAnotherEvent: String = stringResource(R.string.selected_time_is_already_used_by_another_event)
                 Button(onClick = {
                     errorMessage = ""
                     if(title.isBlank())errorMessage += titleIsMandatory
+                    if(startHour.isBlank())errorMessage += startHourIsMandatory
+                    if(startMinute.isBlank())errorMessage += startMinuteIsMandatory
                     if(endHour.isBlank())errorMessage += endHourIsMandatory
                     if(endMinute.isBlank())errorMessage += endMinuteIsMandatory
                     val endTime = LocalDateTime.of(
@@ -114,14 +118,21 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                         endHour.toInt(),
                         endMinute.toInt()
                     )
-                    if(endTime < event.startTime){
+                    val startTime = LocalDateTime.of(
+                        year.toInt(),
+                        month.toInt(),
+                        day.toInt(),
+                        startHour.toInt(),
+                        startMinute.toInt()
+                    )
+                    if(endTime < startTime){
                         errorMessage += eventCannotEndBeforeItStarts
                     }
                     val newEvent = Event(
                         event.id,
                         title,
                         event.date,
-                        event.startTime,
+                        startTime,
                         endTime,
                         description,
                         location,
@@ -130,13 +141,13 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     )
                     var counter = 0
                     allEvents?.forEach {loopEvent ->
-                        if(loopEvent.startTime.dayOfMonth.toString() == day){
+                        if(loopEvent.startTime.dayOfMonth == startTime.dayOfMonth){
                             //make sure it starts and ends either before or after
                             var startsBefore = newEvent.startTime < loopEvent.startTime
                             var endsBefore = newEvent.endTime < loopEvent.startTime
                             var startsAfter = newEvent.startTime > loopEvent.endTime
                             var endsAfter = newEvent.endTime > loopEvent.endTime
-                            if(!(startsBefore && endsBefore || startsAfter || endsAfter) && counter == 0 && loopEvent.id != newEvent.id){
+                            if(!(startsBefore && endsBefore || startsAfter && endsAfter) && counter == 0 && loopEvent.id != newEvent.id){
                                 errorMessage += "$selectedTimeIsAlreadyUsedByAnotherEvent (${loopEvent.title})."
                                 counter++
                                 //without the counter, the errorMessage can be appended many times.
@@ -299,9 +310,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = startHour!!,
                     onValueChange = { startHour = it},
                     maxLines = 1,
-                    readOnly = true,
+                    readOnly = !editable,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
@@ -313,9 +325,10 @@ fun EventScreen(event: Event, navController: NavHostController, viewModel: Calen
                     value = startMinute!!,
                     onValueChange = { startMinute = it},
                     maxLines = 1,
-                    readOnly = true,
+                    readOnly = !editable,
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
+                    colors = if (editable) TextFieldDefaults.textFieldColors(containerColor = Color.White)
+                    else TextFieldDefaults.textFieldColors(containerColor = Color.LightGray)
                 )
             }
             Column(){
