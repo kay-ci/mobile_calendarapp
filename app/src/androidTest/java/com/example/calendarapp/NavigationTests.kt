@@ -44,33 +44,24 @@ class NavigationTests {
 
     @Before
     fun setup() {
-
         composeTestRule.setContent {
-            val owner = LocalViewModelStoreOwner.current
-            owner?.let {
-                testViewModel = viewModel(
-                    it,
-                    "CalenderViewModel",
-                    MainActivity.ViewModelFactory(
-                        LocalContext.current.applicationContext
-                                as Application
-                    )
-                )
-                navController = TestNavHostController(LocalContext.current).apply {
-                    navigatorProvider.addNavigator(ComposeNavigator())
-                }
+            application = ApplicationProvider.getApplicationContext<Application>()
+            testViewModel = CalendarViewModel(application = application)
 
-                val forecastWeatherData by testViewModel.weatherDataForecast.observeAsState()
-                application = ApplicationProvider.getApplicationContext<Application>()
-
-                NavigationComponent(
-                    navController = navController,
-                    viewModel = testViewModel,
-                    0.0,
-                    0.0,
-                    forecastWeatherData
-                )
+            navController = TestNavHostController(LocalContext.current).apply {
+                navigatorProvider.addNavigator(ComposeNavigator())
             }
+
+            val forecastWeatherData by testViewModel.weatherDataForecast.observeAsState()
+
+            NavigationComponent(
+                navController = navController,
+                viewModel = testViewModel,
+                0.0,
+                0.0,
+                forecastWeatherData
+            )
+
         }
     }
 
