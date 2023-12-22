@@ -95,7 +95,7 @@ fun MonthView(
             contentAlignment = Alignment.BottomEnd
         ){
             IconButton(onClick = {
-                navController.navigate(Routes.NewMonthEventView.route + "/${viewModel.currentMonth.value}") },
+                navController.navigate(Routes.NewEventView.route + "/month") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("create_event_view")

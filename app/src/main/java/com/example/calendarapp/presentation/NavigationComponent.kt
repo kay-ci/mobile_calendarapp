@@ -48,13 +48,11 @@ fun NavigationComponent(
             theEvent?.let { EventScreen(it, navController, viewModel) }
         }
 
-        composable(Routes.NewMonthEventView.route + "/{month}"){
-                backStackEntry -> val month = backStackEntry.arguments?.getString("month")
-            NewMonthEventScreen(navController, viewModel)
-        }
-
-        composable(Routes.NewDayEventView.route){
-            NewDayEventScreen(navController, viewModel)
+        composable(Routes.NewEventView.route + "/{option}"){
+                backStackEntry -> val option = backStackEntry.arguments?.getString("option")
+            if(option != null){
+                NewEventScreen(navController, viewModel, option)
+            }
         }
     }
 
