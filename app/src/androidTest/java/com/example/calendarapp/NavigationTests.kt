@@ -31,6 +31,7 @@ import com.example.calendarapp.presentation.NavigationComponent
 import com.example.calendarapp.presentation.Routes
 import com.example.calendarapp.presentation.viewmodel.CalendarViewModel
 import org.junit.Test
+import java.time.LocalDateTime
 
 
 @RunWith(AndroidJUnit4::class)
@@ -59,8 +60,7 @@ class NavigationTests {
                 viewModel = testViewModel,
                 0.0,
                 0.0,
-                forecastWeatherData
-            )
+                forecastWeatherData, null, LocalDateTime.now())
 
         }
     }
