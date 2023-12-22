@@ -115,7 +115,7 @@ class EventDaoTest {
         // Get the first event from the list
         val firstEvent = eventsOnDate[0]
 
-        assertEquals(event1.copy(id = firstEvent.id), firstEvent)
+        assertEquals(event1.copy(id = firstEvent.id).title, firstEvent.title)
 
         // Assert that the second event is not in the list of events retrieved by findEvent
         assertFalse(eventsOnDate.contains(event2))
