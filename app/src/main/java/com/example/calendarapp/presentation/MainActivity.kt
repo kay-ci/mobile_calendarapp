@@ -16,8 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
@@ -35,6 +39,8 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationToken
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
+import kotlinx.coroutines.delay
+import java.time.LocalDateTime
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -131,11 +137,19 @@ class MainActivity : ComponentActivity() {
             )
             val navController = rememberNavController()
             val forecastWeatherData by viewModel.weatherDataForecast.observeAsState()
-            viewModel.fetchNextWeatherData(lat.toString(), lon.toString())
-            NavigationComponent(navController, viewModel, lat, lon, forecastWeatherData)
+            val weatherData by viewModel.weatherData.observeAsState()
+            var lastUpdateTime by remember { mutableStateOf(LocalDateTime.now()) }
+            // Fetch weather data every 10 minutes
+            LaunchedEffect(Unit) {
+                while (true) {
+                    viewModel.fetchWeatherData(lat.toString(), lon.toString())
+                    viewModel.fetchNextWeatherData(lat.toString(), lon.toString())
+                    lastUpdateTime = LocalDateTime.now()
+                    delay(10 * 60 * 100) // Delay for 10 minutes
+                }
+            }
+            NavigationComponent(navController, viewModel, lat, lon, forecastWeatherData, weatherData,lastUpdateTime)
         }
-
-
     }
 
     class ViewModelFactory(val application: Application) :
