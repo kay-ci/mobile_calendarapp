@@ -1,8 +1,10 @@
 package com.example.calendarapp.presentation.viewmodel
 
 import android.app.Application
+import android.content.Context
 import android.icu.util.Calendar
 import android.icu.util.ULocale
+import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -31,6 +33,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.TextStyle
 import java.util.Date
 import java.util.Locale
@@ -191,7 +194,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
                 override fun onResponse(call: Call<WeatherData>, response: Response<WeatherData>) {
                     if (response.isSuccessful) {
                         viewModelScope.launch(Dispatchers.Main) {
-                            Log.d("currentDay",response.body().toString())
                             _weatherData.value = response.body()!!
                         }
                     } else {
@@ -212,7 +214,6 @@ class CalendarViewModel (application: Application) : ViewModel() {
                 override fun onResponse(call: Call<ForecastData>, response: Response<ForecastData>) {
                     if (response.isSuccessful) {
                         viewModelScope.launch(Dispatchers.Main) {
-                            Log.d("test",response.body().toString())
                             _weatherDataForecast.value = response.body()!!
                         }
                     } else {
@@ -250,9 +251,12 @@ class CalendarViewModel (application: Application) : ViewModel() {
     }
 
     fun fetchHolidayData(){
+        val telephonyManager = appContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
+
+        val countryCode = telephonyManager?.simCountryIso
         //Create a coroutine to fetch the data
         viewModelScope.launch ( Dispatchers.IO ){
-            val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/ca"
+            val urlString = "https://date.nager.at/api/v3/PublicHolidays/${currentYear.value}/$countryCode"
             fetchedYear.value = currentYear.value
             DownloadData(context = appContext).fetchData(filename, urlString)
         }
